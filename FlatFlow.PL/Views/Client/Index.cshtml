@@ -1,0 +1,756 @@
+﻿@model IEnumerable<FlatFlow.DAL.Models.Client>
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "Clients";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients - FlatFlow</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #ffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            border: none;
+            margin: 0;
+            min-height: 100vh;
+            box-shadow: none;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+            border-radius: 0;
+            padding: 30px 20px;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                animation: pulse 4s ease-in-out infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.1;
+            }
+        }
+
+        .sidebar h3 {
+            color: #ffff;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 15px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .main-content {
+            padding: 30px;
+            border-radius: 0;
+        }
+
+        .header-section {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .breadcrumb-item.active {
+                color: #8b5cf6;
+            }
+
+            .breadcrumb-item + .breadcrumb-item::before {
+                content: ">";
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+                background: linear-gradient(45deg, #8b5cf6, #9333ea);
+            }
+
+        .clients-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-filter-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.4);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: #8b5cf6;
+                box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
+                color: #ffffff;
+            }
+
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+        .clients-table {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+            color: #ffffff;
+            margin-bottom: 0;
+        }
+
+            .table th {
+                background: rgba(124, 58, 237, 0.2);
+                border: none;
+                padding: 15px;
+                font-weight: 600;
+                color: #a78bfa;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                letter-spacing: 0.5px;
+            }
+
+            .table td {
+                background: rgba(255, 255, 255, 0.02);
+                border: none;
+                padding: 15px;
+                vertical-align: middle;
+                border-bottom: 1px solid rgba(147, 51, 234, 0.1);
+            }
+
+            .table tbody tr:hover {
+                background: rgba(139, 92, 246, 0.1);
+                transform: translateX(5px);
+                transition: all 0.3s ease;
+            }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-info {
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #06b6d4;
+        }
+
+            .btn-info:hover {
+                background: rgba(6, 182, 212, 0.3);
+                border-color: #06b6d4;
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        .btn-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #f59e0b;
+        }
+
+            .btn-warning:hover {
+                background: rgba(245, 158, 11, 0.3);
+                border-color: #f59e0b;
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+        }
+
+            .btn-danger:hover {
+                background: rgba(239, 68, 68, 0.3);
+                border-color: #ef4444;
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .empty-state i {
+                font-size: 4rem;
+                margin-bottom: 20px;
+                color: rgba(139, 92, 246, 0.5);
+            }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+            .floating-elements::before {
+                content: '';
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-elements::after {
+                content: '';
+                position: absolute;
+                bottom: 20%;
+                right: 15%;
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 8s ease-in-out infinite reverse;
+            }
+
+        .add-apartment-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .floating-add-btn {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            position: relative;
+        }
+
+            .floating-add-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+            }
+
+            .floating-add-btn i {
+                font-size: 1.8rem;
+                color: white;
+            }
+
+            /* التأثير البصري للزر */
+            .floating-add-btn::before {
+                content: '';
+                position: absolute;
+                top: -10%;
+                left: -10%;
+                width: 120%;
+                height: 120%;
+                background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: pulse 2s ease-in-out infinite;
+                z-index: -1;
+            }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .commission-amount {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                border-radius: 0;
+            }
+
+            .main-content {
+                border-radius: 0;
+                padding: 20px;
+            }
+
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-content h1 {
+                font-size: 2rem;
+            }
+
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn-sm {
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <div class="header-content">
+                            <h1>Clients Management</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Apartment")" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Clients</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="header-actions">
+                            <a href="@Url.Action("Add", "Client")" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>
+                                Add New Client
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                        </div>
+                    }
+
+                    <!-- Error Message -->
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    <!-- Clients Container -->
+                    <div class="clients-container">
+                        <!-- Search and Filter Section -->
+                        <div class="search-filter-section">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(147, 51, 234, 0.4); color: #8b5cf6;">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Search clients by name or phone..." id="searchInput">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="statusFilter">
+                                        <option value="">All Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="sortBy">
+                                        <option value="name">Sort by Name</option>
+                                        <option value="date">Sort by Date</option>
+                                        <option value="commission">Sort by Commission</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clients Table -->
+                        @if (Model != null && Model.Any())
+                        {
+                            <div class="clients-table">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="fas fa-user me-2"></i>Client</th>
+                                                <th><i class="fas fa-phone me-2"></i>Phone</th>
+                                                <th><i class="fas fa-home me-2"></i>Apartment</th>
+                                                <th><i class="fas fa-toggle-on me-2"></i>Status</th>
+                                                <th><i class="fas fa-dollar-sign me-2"></i>Commission</th>
+                                                <th><i class="fas fa-sticky-note me-2"></i>Notes</th>
+                                                <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var client in Model)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="client-info">
+                                                            <div class="client-avatar">
+                                                                @client.FullName.Substring(0, 1).ToUpper()
+                                                            </div>
+                                                            <div>
+                                                                <strong>@client.FullName</strong>
+                                                                <br>
+                                                                <small style="color: rgba(255, 255, 255, 0.7);">ID: #@client.Id</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <i class="fas fa-phone me-2 text-primary"></i>
+                                                        @client.Phone
+                                                    </td>
+                                                    <td>
+                                                        @if (client.Apartment != null)
+                                                        {
+                                                            <div>
+                                                                <strong>@client.Apartment.Title</strong>
+                                                                <br>
+                                                                <small style="color: rgba(255, 255, 255, 0.7);">$@client.Apartment.Price/month</small>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color: rgba(255, 255, 255, 0.5);">No apartment assigned</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <span class="status-badge @(client.Status == "Active" ? "status-active" : "status-inactive")">
+                                                            @client.Status
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        @if (client.Commission.HasValue)
+                                                        {
+                                                            <span class="commission-amount">$@client.Commission.Value.ToString("F2")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color: rgba(255, 255, 255, 0.5);">No commission</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(client.Note))
+                                                        {
+                                                            <span title="@client.Note">
+                                                                @(client.Note.Length > 30 ? client.Note.Substring(0, 30) + "..." : client.Note)
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color: rgba(255, 255, 255, 0.5);">No notes</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <div class="action-buttons">
+                                                            <a href="@Url.Action("Details", "Client", new { id = client.Id })" class="btn btn-info btn-sm" title="View Details">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                            <a href="@Url.Action("Edit", "Client", new { id = client.Id })" class="btn btn-warning btn-sm" title="Edit Client">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="@Url.Action("Delete", "Client", new { id = client.Id })" class="btn btn-danger btn-sm" title="Delete Client" onclick="return confirm('Are you sure you want to delete this client?')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h3>No Clients Found</h3>
+                                <p>You haven't added any clients yet. Start by adding your first client!</p>
+                                <a href="@Url.Action("Add", "Client")" class="btn btn-primary mt-3">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Add First Client
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const phone = row.cells[1].textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || phone.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Status filter
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            const selectedStatus = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const status = row.cells[3].textContent.trim();
+
+                if (selectedStatus === '' || status === selectedStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Sort functionality
+        document.getElementById('sortBy').addEventListener('change', function() {
+            const sortBy = this.value;
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                let aValue, bValue;
+
+                switch(sortBy) {
+                    case 'name':
+                        aValue = a.cells[0].textContent.toLowerCase();
+                        bValue = b.cells[0].textContent.toLowerCase();
+                        break;
+                    case 'commission':
+                        aValue = parseFloat(a.cells[4].textContent.replace(/[^0-9.-]+/g,"")) || 0;
+                        bValue = parseFloat(b.cells[4].textContent.replace(/[^0-9.-]+/g,"")) || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (sortBy === 'commission') {
+                    return bValue - aValue; // Descending for commission
+                } else {
+                    return aValue > bValue ? 1 : -1; // Ascending for name
+                }
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    </script>
+</body>
+</html>

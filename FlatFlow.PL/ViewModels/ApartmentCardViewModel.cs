@@ -7,6 +7,6 @@
         public decimal Price { get; set; }
         public string Location { get; set; }
         public bool IsRented { get; set; }
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = "/images/default.jpg";
     }
 }

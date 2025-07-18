@@ -1,0 +1,38 @@
+﻿@{
+    string activePage = ViewData["ActivePage"] as string ?? "Apartments";
+}
+
+<div class="col-lg-2 col-md-3">
+    <div class="sidebar">
+        <h3><i class="fas fa-building"></i> FlatFlow</h3>
+        <nav class="nav flex-column">
+            <div class="nav-item">
+                <a class="nav-link @(activePage == "Apartments" ? "active" : "")" href="/Apartment">
+                    <i class="fas fa-home"></i> Apartments
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link @(activePage == "Clients" ? "active" : "")" href="/Client/Index">
+                    <i class="fas fa-users"></i> Clients
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link @(activePage == "Reports" ? "active" : "")" href="#">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link @(activePage == "Settings" ? "active" : "")" href="#">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </div>
+
+            <!-- زر الإضافة الجديد تحت الإعدادات مباشرة -->
+            <div class="add-apartment-btn">
+                <div class="floating-add-btn" onclick="window.location.href='/Apartment/Add'">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
