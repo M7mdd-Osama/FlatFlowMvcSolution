@@ -1,4 +1,6 @@
-﻿namespace FlatFlow.DAL.Models
+﻿using FlatFlow.DAL.Models.Shared;
+
+namespace FlatFlow.DAL.Models
 {
     public class FacebookGroup : BaseEntity
     {

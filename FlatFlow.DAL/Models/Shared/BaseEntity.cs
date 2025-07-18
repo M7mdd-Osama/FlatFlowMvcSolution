@@ -1,4 +1,4 @@
-﻿namespace FlatFlow.DAL.Models
+﻿namespace FlatFlow.DAL.Models.Shared
 {
     public class BaseEntity
     {

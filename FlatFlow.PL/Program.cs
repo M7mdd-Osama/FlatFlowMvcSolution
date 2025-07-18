@@ -1,3 +1,8 @@
+using FlatFlow.DAL.Data.DbContexts;
+using FlatFlow.DAL.Repositories.Classes;
+using FlatFlow.DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace FlatFlow.PL
 {
     public class Program
@@ -9,6 +14,12 @@ namespace FlatFlow.PL
             #region Add services to the container.
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddScoped<IApartmentRepo, ApartmentRepo>();
 
             #endregion
 
@@ -32,10 +43,10 @@ namespace FlatFlow.PL
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Apartment}/{action=Index}/{id?}");
 
-            #endregion     
-            
+            #endregion
+
             app.Run();
         }
     }

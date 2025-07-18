@@ -1,0 +1,698 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apartment Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #ffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            border: none;
+            margin: 0;
+            min-height: 100vh;
+            box-shadow: none;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+            border-radius: 0;
+            padding: 30px 20px;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                animation: pulse 4s ease-in-out infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100%
+
+        {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.1;
+        }
+
+        }
+
+        .sidebar h3 {
+            color: #ffff;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 15px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .main-content {
+            padding: 30px;
+            border-radius: 0;
+        }
+
+        .header-section {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(147, 51, 234, 0.3);
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.4);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: #8b5cf6;
+                box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
+                color: black;
+            }
+
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.6);
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+                background: linear-gradient(45deg, #8b5cf6, #9333ea);
+            }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+            .stats-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+                border-color: rgba(147, 51, 234, 0.5);
+            }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #8b5cf6;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .apartment-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            height: 100%;
+        }
+
+            .apartment-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 40px rgba(124, 58, 237, 0.3);
+                border-color: rgba(147, 51, 234, 0.6);
+            }
+
+        .card-image {
+            height: 250px;
+            background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .card-image::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 1;
+            }
+
+            .card-image i {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 4rem;
+                color: rgba(255, 255, 255, 0.5);
+                z-index: 2;
+            }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin: 15px 0;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-rented {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .card-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(147, 51, 234, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid #8b5cf6;
+            color: #8b5cf6;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+            .btn-outline-primary:hover {
+                background: #8b5cf6;
+                color: #ffffff;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+            }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+            .floating-elements::before {
+                content: '';
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-elements::after {
+                content: '';
+                position: absolute;
+                bottom: 20%;
+                right: 15%;
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 8s ease-in-out infinite reverse;
+            }
+
+        @@keyframes float {
+            0%, 100%
+
+        {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar
+
+        {
+            border-radius: 0;
+        }
+
+        .main-content {
+            border-radius: 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .search-form {
+            padding: 15px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3">
+                <div class="sidebar">
+                    <h3><i class="fas fa-building"></i> FlatFlow</h3>
+                    <nav class="nav flex-column">
+                        <div class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="fas fa-home"></i> Apartments
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-users"></i> Customers
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-chart-bar"></i> Reports
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <h1 class="page-title">Available Apartments</h1>
+
+                        <!-- Search Form -->
+                        <div class="search-form">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Search apartments...">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option value="">All Status</option>
+                                        <option value="false">Available</option>
+                                        <option value="true">Rented</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select">
+                                        <option value="">All Locations</option>
+                                        <option value="downtown">Downtown</option>
+                                        <option value="suburbs">Suburbs</option>
+                                        <option value="beachfront">Beachfront</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="stats-number">156</div>
+                                <div class="stats-label">Total Apartments</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <div class="stats-number">89</div>
+                                <div class="stats-label">Available</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="stats-number">67</div>
+                                <div class="stats-label">Rented</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="stats-card">
+                                <div class="stats-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="stats-number">$45,280</div>
+                                <div class="stats-label">Total Commission</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apartments Grid -->
+                    <div class="row g-4">
+                        <!-- Apartment Card 1 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">Luxury Downtown Apartment</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Downtown District</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>3 Bedrooms</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>2 Bathrooms</span>
+                                    </div>
+                                    <div class="card-price">$2,500/month</div>
+                                    <span class="status-badge badge-available">Available</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apartment Card 2 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">Modern Suburban House</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Suburban Area</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>4 Bedrooms</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>3 Bathrooms</span>
+                                    </div>
+                                    <div class="card-price">$3,200/month</div>
+                                    <span class="status-badge badge-rented">Rented</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apartment Card 3 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">Beachfront Condo</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Beachfront</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>2 Bedrooms</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>2 Bathrooms</span>
+                                    </div>
+                                    <div class="card-price">$4,500/month</div>
+                                    <span class="status-badge badge-available">Available</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apartment Card 4 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">City Center Studio</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>City Center</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>1 Bedroom</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>1 Bathroom</span>
+                                    </div>
+                                    <div class="card-price">$1,800/month</div>
+                                    <span class="status-badge badge-available">Available</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apartment Card 5 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">Family Townhouse</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Residential Zone</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>5 Bedrooms</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>4 Bathrooms</span>
+                                    </div>
+                                    <div class="card-price">$5,200/month</div>
+                                    <span class="status-badge badge-rented">Rented</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apartment Card 6 -->
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="apartment-card">
+                                <div class="card-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5 class="card-title">Penthouse Suite</h5>
+                                    <div class="card-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Premium District</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bed"></i>
+                                        <span>3 Bedrooms</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <i class="fas fa-bath"></i>
+                                        <span>3 Bathrooms</span>
+                                    </div>
+                                    <div class="card-price">$8,500/month</div>
+                                    <span class="status-badge badge-available">Available</span>
+                                </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

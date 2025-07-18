@@ -1,4 +1,6 @@
-﻿namespace FlatFlow.DAL.Models
+﻿using FlatFlow.DAL.Models.ApartmentModel;
+
+namespace FlatFlow.DAL.Models.Shared
 {
     public class ApartmentGroupPost : BaseEntity
     {

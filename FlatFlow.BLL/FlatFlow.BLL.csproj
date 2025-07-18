@@ -10,4 +10,11 @@
     <ProjectReference Include="..\FlatFlow.DAL\FlatFlow.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+    <Folder Include="Factories\" />
+    <Folder Include="Services\Classes\" />
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
+
 </Project>

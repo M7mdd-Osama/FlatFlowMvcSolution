@@ -1,4 +1,7 @@
-﻿namespace FlatFlow.DAL.Models
+﻿using FlatFlow.DAL.Models.ApartmentModel;
+using FlatFlow.DAL.Models.Shared;
+
+namespace FlatFlow.DAL.Models
 {
     public class Client : BaseEntity
     {
