@@ -27,7 +27,6 @@
                 </a>
             </div>
 
-            <!-- زر تسجيل الخروج -->
             <div class="nav-item logout-section">
                 <form method="post" action="/Account/Logout" class="logout-form" onsubmit="return confirmLogout()">
                     @Html.AntiForgeryToken()
@@ -37,7 +36,6 @@
                 </form>
             </div>
 
-            <!-- زر الإضافة الجديد -->
             <div class="add-apartment-btn">
                 <div class="floating-add-btn" onclick="window.location.href='/Apartment/Add'">
                     <i class="fas fa-plus"></i>
@@ -48,7 +46,6 @@
 </div>
 
 <style>
-    /* CSS لزر تسجيل الخروج */
     .logout-section {
         margin: 10px 0;
     }
@@ -92,7 +89,6 @@
             font-size: 16px;
         }
 
-    /* تحسين السايد بار */
     .sidebar {
         height: 100vh;
         display: flex;
@@ -104,12 +100,10 @@
             flex-direction: column;
         }
 
-    /* إضافة مساحة للزر العائم */
     .add-apartment-btn {
         margin: 20px 0;
     }
 
-    /* تحسين شكل الزر العائم */
     .floating-add-btn {
         background: linear-gradient(45deg, #007bff, #0056b3);
         color: white;
@@ -132,21 +126,169 @@
 
     /* Responsive */
     @@media (max-width: 768px) {
-        .logout-btn {
-            padding: 8px 12px;
-            font-size: 12px;
-        }
+        .logout-btn
 
-        .floating-add-btn {
-            width: 45px;
-            height: 45px;
-        }
+    {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
-    <script >
-    function confirmLogout() {
-        return confirm('هل أنت متأكد من تسجيل الخروج؟');
+    .floating-add-btn {
+        width: 45px;
+        height: 45px;
     }
 
-    </script >
+    }
+
+    /* Custom Modal Styles */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+
+    .custom-modal {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @@keyframes modalSlideIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    }
+
+    .modal-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+    }
+
+        .modal-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+    .custom-modal h3 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .custom-modal p {
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn-cancel, .btn-confirm {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 100px;
+    }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+    .btn-confirm {
+        background: #dc3545;
+        color: white;
+    }
+
+        .btn-confirm:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
 </style>
+
+<script>
+    function confirmLogout() {
+        // Create custom confirmation modal
+        const modal = document.createElement('div');
+        modal.innerHTML = `
+            <div class="custom-modal-overlay" id="logoutModal">
+                <div class="custom-modal">
+                    <div class="modal-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to logout?</p>
+                    <div class="modal-buttons">
+                        <button class="btn-cancel" onclick="closeLogoutModal()">Cancel</button>
+                        <button class="btn-confirm" onclick="proceedLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.getElementById('logoutModal').style.display = 'flex';
+        return false; // Prevent form submission
+    }
+
+    function closeLogoutModal() {
+        const modal = document.getElementById('logoutModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    function proceedLogout() {
+        // Find the logout form and submit it
+        const form = document.querySelector('.logout-form');
+        if (form) {
+            // Remove the onsubmit handler temporarily
+            form.onsubmit = null;
+            form.submit();
+        }
+    }
+</script>
