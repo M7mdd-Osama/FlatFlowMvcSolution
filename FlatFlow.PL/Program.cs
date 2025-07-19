@@ -1,9 +1,17 @@
+using FlatFlow.BLL.DTOs;
+using FlatFlow.BLL.Services.Classes;
+using FlatFlow.BLL.Services.Interfaces;
 using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Models;
 using FlatFlow.DAL.Models.ApartmentModel;
+using FlatFlow.DAL.Models.Identity;
 using FlatFlow.DAL.Repositories.Classes;
 using FlatFlow.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using IEmailSender = FlatFlow.BLL.Services.Interfaces.IEmailSender;
+using EmailSender = FlatFlow.BLL.Services.Classes.EmailSender;
 
 namespace FlatFlow.PL
 {
@@ -16,16 +24,54 @@ namespace FlatFlow.PL
             #region Add services to the container.
 
             builder.Services.AddControllersWithViews();
+
+            // Database Context Configuration
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Repository Registrations
             builder.Services.AddScoped<IGenericRepo<Client>, GenericRepo<Client>>();
             builder.Services.AddScoped<IGenericRepo<Apartment>, GenericRepo<Apartment>>();
             builder.Services.AddScoped<IApartmentRepo, ApartmentRepo>();
 
-            builder.Services.AddHttpContextAccessor();
+            // Authentication Configuration
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            });
+
+            // Identity Configuration
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.Tokens.ProviderMap.Add("Default",
+                    new TokenProviderDescriptor(typeof(IUserTwoFactorTokenProvider<User>)));
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+            // Cookie Configuration
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
+            // Security Stamp Configuration
+            builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromMinutes(30);
+            });
+
+            // Email Services Configuration
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
             #endregion
 
             var app = builder.Build();
@@ -35,22 +81,18 @@ namespace FlatFlow.PL
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Apartment}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=Login}/{id?}");
 
             #endregion
 

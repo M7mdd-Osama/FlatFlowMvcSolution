@@ -1,4 +1,5 @@
 ﻿using FlatFlow.DAL.Models.ApartmentModel;
+using FlatFlow.DAL.Models.Identity;
 using FlatFlow.DAL.Models.Shared;
 
 namespace FlatFlow.DAL.Models
@@ -14,7 +15,7 @@ namespace FlatFlow.DAL.Models
         public int ApartmentId { get; set; }
         public Apartment Apartment { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
     }
 }

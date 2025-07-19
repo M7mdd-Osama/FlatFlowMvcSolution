@@ -49,8 +49,7 @@ namespace FlatFlow.PL.Controllers
                     Status = model.Status,
                     Note = model.Note,
                     Commission = model.Commission,
-                    ApartmentId = model.ApartmentId,
-                    UserId = 1 // Replace with actual user ID after implementing authentication
+                    ApartmentId = model.ApartmentId
                 };
 
                 _clientRepo.Add(client);
