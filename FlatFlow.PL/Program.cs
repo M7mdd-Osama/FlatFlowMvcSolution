@@ -1,6 +1,4 @@
 using FlatFlow.BLL.DTOs;
-using FlatFlow.BLL.Services.Classes;
-using FlatFlow.BLL.Services.Interfaces;
 using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Models;
 using FlatFlow.DAL.Models.ApartmentModel;
@@ -8,7 +6,6 @@ using FlatFlow.DAL.Models.Identity;
 using FlatFlow.DAL.Repositories.Classes;
 using FlatFlow.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using IEmailSender = FlatFlow.BLL.Services.Interfaces.IEmailSender;
 using EmailSender = FlatFlow.BLL.Services.Classes.EmailSender;

@@ -1,5 +1,6 @@
 ﻿using FlatFlow.BLL.Services.Interfaces;
 using FlatFlow.DAL.Models.Identity;
+using FlatFlow.PL.Helpers;
 using FlatFlow.PL.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace FlatFlow.PL.Controllers
             {
                 User? user = null;
 
-                if (IsValidEmail(viewModel.UserNameOrEmail))
+                if (IsValidEmail.IsValidEmailFunction(viewModel.UserNameOrEmail))
                 {
                     user = await _userManager.FindByEmailAsync(viewModel.UserNameOrEmail);
                 }
@@ -219,15 +220,12 @@ namespace FlatFlow.PL.Controllers
                     return RedirectToAction("ForgotPasswordConfirmation");
                 }
 
-                // إنشاء كود عشوائي مكون من 6 أرقام
                 var code = new Random().Next(100000, 999999).ToString();
 
-                // حفظ الكود في قاعدة البيانات
                 user.ResetPasswordCode = code;
                 user.ResetPasswordCodeExpiry = DateTime.Now.AddMinutes(30);
                 await _userManager.UpdateAsync(user);
 
-                // إرسال البريد الإلكتروني بالكود
                 await _emailSender.SendEmailAsync(
                     viewModel.Email,
                     "Password Reset Code",
@@ -273,11 +271,9 @@ namespace FlatFlow.PL.Controllers
                 var user = await _userManager.FindByEmailAsync(viewModel.Email);
                 if (user == null)
                 {
-                    // لا تخبر المستخدم إذا كان البريد غير موجود لأسباب أمنية
                     return RedirectToAction("ResetPasswordConfirmation");
                 }
 
-                // التحقق من صحة الكود وتاريخ انتهائه
                 if (string.IsNullOrEmpty(user.ResetPasswordCode) ||
                     user.ResetPasswordCode != viewModel.Code ||
                     user.ResetPasswordCodeExpiry == null ||
@@ -287,13 +283,11 @@ namespace FlatFlow.PL.Controllers
                     return View(viewModel);
                 }
 
-                // إعادة تعيين كلمة المرور
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var result = await _userManager.ResetPasswordAsync(user, token, viewModel.Password);
 
                 if (result.Succeeded)
                 {
-                    // مسح الكود بعد الاستخدام
                     user.ResetPasswordCode = null;
                     user.ResetPasswordCodeExpiry = null;
                     await _userManager.UpdateAsync(user);
@@ -335,19 +329,15 @@ namespace FlatFlow.PL.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    // لا تخبر المستخدم إذا كان البريد غير موجود لأسباب أمنية
                     return Ok();
                 }
 
-                // إنشاء كود جديد
                 var newCode = new Random().Next(100000, 999999).ToString();
 
-                // حفظ الكود في قاعدة البيانات
                 user.ResetPasswordCode = newCode;
                 user.ResetPasswordCodeExpiry = DateTime.Now.AddMinutes(30);
                 await _userManager.UpdateAsync(user);
 
-                // إرسال البريد الإلكتروني
                 await _emailSender.SendEmailAsync(
                     model.Email,
                     "New Password Reset Code",
@@ -374,21 +364,5 @@ namespace FlatFlow.PL.Controllers
 
         #endregion
 
-        #region Is Valid Email Function
-
-        private static bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        #endregion   
     }
 }
