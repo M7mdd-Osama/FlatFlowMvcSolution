@@ -2,10 +2,12 @@
 using FlatFlow.DAL.Models.ApartmentModel;
 using FlatFlow.DAL.Repositories.Interfaces;
 using FlatFlow.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlatFlow.PL.Controllers
 {
+    [Authorize]
     public class ApartmentController : Controller
     {
         private readonly IApartmentRepo _apartmentRepo;
@@ -80,7 +82,7 @@ namespace FlatFlow.PL.Controllers
                     Description = model.Description,
                     Location = model.Location,
                     IsRented = false,
-                    UserId = int.Parse(userId),
+                    UserId = userId,
                     ApartmentImages = new List<ApartmentImage>()
                 };
 
