@@ -5,10 +5,11 @@ using FlatFlow.DAL.Models.ApartmentModel;
 using FlatFlow.DAL.Models.Identity;
 using FlatFlow.DAL.Repositories.Classes;
 using FlatFlow.DAL.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using IEmailSender = FlatFlow.BLL.Services.Interfaces.IEmailSender;
 using EmailSender = FlatFlow.BLL.Services.Classes.EmailSender;
+using IEmailSender = FlatFlow.BLL.Services.Interfaces.IEmailSender;
 
 namespace FlatFlow.PL
 {
@@ -69,6 +70,10 @@ namespace FlatFlow.PL
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 104857600; // 100MB
+            });
             #endregion
 
             var app = builder.Build();

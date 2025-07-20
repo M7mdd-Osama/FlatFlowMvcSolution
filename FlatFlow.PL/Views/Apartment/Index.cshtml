@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FlatFlow.PL.ViewModels.ApartmentIndexViewModel
+@{
     Layout = null;
     ViewData["ActivePage"] = "Apartments";
 }
@@ -57,15 +58,18 @@
             }
 
         @@keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
+            0%, 100%
 
-            50% {
-                transform: scale(1.1);
-                opacity: 0.1;
-            }
+        {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.1;
+        }
+
         }
 
         .sidebar h3 {
@@ -132,6 +136,7 @@
             border-radius: 15px;
             padding: 20px;
             border: 1px solid rgba(147, 51, 234, 0.3);
+            margin-bottom: 25px; /* Added margin bottom for spacing */
         }
 
         .form-control, .form-select {
@@ -174,34 +179,46 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(147, 51, 234, 0.3);
             border-radius: 15px;
-            padding: 25px;
+            padding: 15px;
             text-align: center;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
             .stats-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
                 border-color: rgba(147, 51, 234, 0.5);
             }
 
         .stats-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
             color: #8b5cf6;
         }
 
         .stats-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
+            line-height: 1.2;
         }
 
         .stats-label {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            line-height: 1.1;
+        }
+
+        /* Stats section with additional spacing */
+        .stats-section {
+            margin-top: 20px;
+            margin-bottom: 35px; /* Added more bottom margin */
         }
 
         .apartment-card {
@@ -225,6 +242,7 @@
             background: linear-gradient(135deg, #7c3aed, #5b21b6);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
             .card-image::before {
@@ -236,6 +254,15 @@
                 bottom: 0;
                 background: rgba(0, 0, 0, 0.3);
                 z-index: 1;
+            }
+
+            .card-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
 
             .card-image i {
@@ -353,14 +380,84 @@
                 animation: float 8s ease-in-out infinite reverse;
             }
 
-        @@keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
+        .card-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Video thumbnail styling */
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+            .video-thumbnail video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
 
-            50% {
-                transform: translateY(-20px);
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+
+            .video-play-overlay:hover {
+                background: rgba(0, 0, 0, 0.8);
+                transform: translate(-50%, -50%) scale(1.1);
             }
+
+            .video-play-overlay i {
+                color: white;
+                font-size: 2rem;
+                margin-left: 4px;
+            }
+
+        .video-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @@keyframes float {
+            0%, 100%
+
+        {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+
         }
 
         .add-apartment-btn {
@@ -407,27 +504,141 @@
                 z-index: -1;
             }
 
+        .no-apartments {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .no-apartments i {
+                font-size: 4rem;
+                margin-bottom: 20px;
+                color: #8b5cf6;
+            }
+
+        /* Modal for video playback - Full Browser Size */
+        .video-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            overflow: hidden;
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-modal video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            border-radius: 0;
+            max-width: none;
+            max-height: none;
+        }
+
+        .video-modal-close {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 1001;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+            .video-modal-close:hover {
+                color: #8b5cf6;
+                transform: scale(1.1);
+            }
+
+        .video-modal video::-webkit-media-controls-panel {
+            background-color: rgba(0,0,0,0.8);
+        }
+
         @@media (max-width: 768px) {
-            .sidebar {
-                border-radius: 0;
-            }
+            .video-modal-close
 
-            .main-content {
-                border-radius: 0;
-            }
+        {
+            top: 10px;
+            right: 15px;
+            font-size: 35px;
+        }
 
-            .page-title {
-                font-size: 2rem;
-            }
+        .video-modal video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
 
-            .search-form {
-                padding: 15px;
-            }
+        .sidebar {
+            border-radius: 0;
+        }
+
+        .main-content {
+            border-radius: 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .search-form {
+            padding: 15px;
+        }
+
+        .video-modal-content {
+            width: 95%;
+            margin: 10% auto;
+        }
+
+        .stats-card {
+            height: 100px;
+            padding: 10px;
+        }
+
+        .stats-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .stats-number {
+            font-size: 1.2rem;
+        }
+
+        .stats-label {
+            font-size: 0.7rem;
+        }
+
         }
     </style>
 </head>
 <body>
     <div class="floating-elements"></div>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <span class="video-modal-close">&times;</span>
+            <video id="modalVideo" controls>
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
 
     <div class="main-container">
         <div class="row g-0 h-100">
@@ -441,263 +652,159 @@
                     <div class="header-section">
                         <h1 class="page-title">Available Apartments</h1>
 
-                        <!-- Search Form -->
-                        <div class="search-form">
+                        <!-- Search Form - Updated with price values -->
+                        <form method="get" asp-action="Index" class="search-form">
                             <div class="row g-3">
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="Search apartments...">
+                                <div class="col-md-3">
+                                    <input type="text" name="searchTerm" value="@Model?.SearchTerm" class="form-control" placeholder="Search apartments...">
                                 </div>
                                 <div class="col-md-3">
-                                    <select class="form-select">
+                                    <select name="isRentedFilter" class="form-select">
                                         <option value="">All Status</option>
-                                        <option value="false">Available</option>
-                                        <option value="true">Rented</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option value="">All Locations</option>
-                                        <option value="downtown">Downtown</option>
-                                        <option value="suburbs">Suburbs</option>
-                                        <option value="beachfront">Beachfront</option>
+                                        <option value="false" selected="@(Model?.IsRentedFilter == false ? "selected" : null)">Available</option>
+                                        <option value="true" selected="@(Model?.IsRentedFilter == true ? "selected" : null)">Rented</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-primary w-100">
+                                    <input type="number" name="minPrice" value="@Model?.MinPrice" class="form-control" placeholder="Min Price" min="0">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" name="maxPrice" value="@Model?.MaxPrice" class="form-control" placeholder="Max Price" min="0">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
                                         <i class="fas fa-search"></i> Search
                                     </button>
                                 </div>
                             </div>
+                        </form>
+                    </div>
+
+                    <!-- Stats Cards - Smaller and more compact with proper spacing -->
+                    <div class="stats-section">
+                        <div class="row g-3">
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.TotalApartments ?? 0)</div>
+                                    <div class="stats-label">Total Apartments</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.AvailableCount ?? 0)</div>
+                                    <div class="stats-label">Available</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.RentedCount ?? 0)</div>
+                                    <div class="stats-label">Rented</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="stats-number">$@((Model?.TotalCommission ?? 0).ToString("N0"))</div>
+                                    <div class="stats-label">Total Commission</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Stats Cards -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-building"></i>
-                                </div>
-                                <div class="stats-number">156</div>
-                                <div class="stats-label">Total Apartments</div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-key"></i>
-                                </div>
-                                <div class="stats-number">89</div>
-                                <div class="stats-label">Available</div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-home"></i>
-                                </div>
-                                <div class="stats-number">67</div>
-                                <div class="stats-label">Rented</div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="stats-card">
-                                <div class="stats-icon">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </div>
-                                <div class="stats-number">$45,280</div>
-                                <div class="stats-label">Total Commission</div>
-                            </div>
-                        </div>
+                    <!-- Add Apartment Button -->
+                    <div class="text-end mb-4">
+                        <a href="@Url.Action("Add", "Apartment")" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add New Apartment
+                        </a>
                     </div>
 
-                    <!-- Apartments Grid -->
+                    <!-- Apartments Grid - Dynamic Data -->
                     <div class="row g-4">
-                        <!-- Apartment Card 1 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">Luxury Downtown Apartment</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Downtown District</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>3 Bedrooms</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>2 Bathrooms</span>
-                                    </div>
-                                    <div class="card-price">$2,500/month</div>
-                                    <span class="status-badge badge-available">Available</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        @if (Model?.Apartments != null && Model.Apartments.Any())
+                        {
+                            @foreach (var apartment in Model.Apartments)
+                            {
+                                <div class="col-xl-4 col-lg-6 col-md-12">
+                                    <div class="apartment-card">
 
-                        <!-- Apartment Card 2 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">Modern Suburban House</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Suburban Area</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>4 Bedrooms</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>3 Bathrooms</span>
-                                    </div>
-                                    <div class="card-price">$3,200/month</div>
-                                    <span class="status-badge badge-rented">Rented</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                                        <div class="card-image">
+                                            @if (!string.IsNullOrEmpty(apartment.ImageUrl) && apartment.ImageUrl != "/images/default.jpg")
+                                            {
+                                                @if (apartment.IsVideo)
+                                                {
+                                                    <div class="video-thumbnail">
+                                                        <!-- Video with preload="metadata" to show first frame -->
+                                                        <video class="card-media" preload="metadata" muted>
+                                                            <source src="@apartment.ImageUrl#t=1" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
 
-                        <!-- Apartment Card 3 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">Beachfront Condo</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Beachfront</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>2 Bedrooms</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>2 Bathrooms</span>
-                                    </div>
-                                    <div class="card-price">$4,500/month</div>
-                                    <span class="status-badge badge-available">Available</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                                                        <!-- Video indicator -->
+                                                        <div class="video-indicator">
+                                                            <i class="fas fa-video"></i>
+                                                            <span>Video</span>
+                                                        </div>
 
-                        <!-- Apartment Card 4 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
+                                                        <!-- Play overlay -->
+                                                        <div class="video-play-overlay" onclick="playVideo('@apartment.ImageUrl')">
+                                                            <i class="fas fa-play"></i>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <img src="@apartment.ImageUrl" alt="@apartment.Title" class="card-media" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-image"></i>
+                                            }
+                                        </div>
+                                        <div class="card-content">
+                                            <h5 class="card-title">@apartment.Title</h5>
+                                            <div class="card-info">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                <span>@apartment.Location</span>
+                                            </div>
+                                            <div class="card-price">$@apartment.Price.ToString("N0")/month</div>
+                                            <span class="status-badge @(apartment.IsRented ? "badge-rented" : "badge-available")">
+                                                @(apartment.IsRented ? "Rented" : "Available")
+                                            </span>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-outline-primary" onclick="viewDetails(@apartment.Id)">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">City Center Studio</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>City Center</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>1 Bedroom</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>1 Bathroom</span>
-                                    </div>
-                                    <div class="card-price">$1,800/month</div>
-                                    <span class="status-badge badge-available">Available</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Apartment Card 5 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">Family Townhouse</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Residential Zone</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>5 Bedrooms</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>4 Bathrooms</span>
-                                    </div>
-                                    <div class="card-price">$5,200/month</div>
-                                    <span class="status-badge badge-rented">Rented</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-12">
+                                <div class="no-apartments">
+                                    <i class="fas fa-home"></i>
+                                    <h3>No Apartments Found</h3>
+                                    <p>@(string.IsNullOrEmpty(Model?.SearchTerm) ? "No apartments available at the moment." : $"No apartments found matching '{Model.SearchTerm}'.")</p>
+                                    <a href="@Url.Action("Add", "Apartment")" class="btn btn-primary mt-3">
+                                        <i class="fas fa-plus"></i> Add Your First Apartment
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Apartment Card 6 -->
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="apartment-card">
-                                <div class="card-image">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="card-content">
-                                    <h5 class="card-title">Penthouse Suite</h5>
-                                    <div class="card-info">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span>Premium District</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bed"></i>
-                                        <span>3 Bedrooms</span>
-                                    </div>
-                                    <div class="card-info">
-                                        <i class="fas fa-bath"></i>
-                                        <span>3 Bathrooms</span>
-                                    </div>
-                                    <div class="card-price">$8,500/month</div>
-                                    <span class="status-badge badge-available">Available</span>
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -705,5 +812,59 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewDetails(apartmentId) {
+            // Navigate to apartment details page
+            window.location.href = `/Apartment/Details/${apartmentId}`;
+        }
+
+        // Video modal functionality
+        function playVideo(videoUrl) {
+            const modal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            const videoSource = modalVideo.querySelector('source');
+
+            videoSource.src = videoUrl;
+            modalVideo.load();
+            modal.style.display = 'block';
+
+            // Auto play when modal opens
+            modalVideo.play();
+        }
+
+        // Close modal functionality
+        document.querySelector('.video-modal-close').onclick = function() {
+            const modal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+
+            modalVideo.pause();
+            modalVideo.currentTime = 0;
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('videoModal');
+            if (event.target == modal) {
+                const modalVideo = document.getElementById('modalVideo');
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+                modal.style.display = 'none';
+            }
+        }
+
+        // Preload video thumbnails after page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const videos = document.querySelectorAll('.video-thumbnail video');
+            videos.forEach(video => {
+                // Set currentTime to 1 second to get a better thumbnail
+                video.addEventListener('loadedmetadata', function() {
+                    if (video.duration >= 1) {
+                        video.currentTime = 1;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

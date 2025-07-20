@@ -8,9 +8,14 @@ namespace FlatFlow.DAL.Data.Configurations
         {
             builder.Property(p => p.Url).IsRequired().HasMaxLength(500);
 
+
             builder.HasOne(p => p.Apartment)
                    .WithMany(a => a.ApartmentImages)
-                   .HasForeignKey(p => p.ApartmentId);
+                   .HasForeignKey(p => p.ApartmentId)
+                   .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.HasIndex(p => p.ApartmentId);
         }
+
     }
 }

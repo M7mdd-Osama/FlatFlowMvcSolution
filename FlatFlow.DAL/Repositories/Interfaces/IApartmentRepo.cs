@@ -6,5 +6,6 @@ namespace FlatFlow.DAL.Repositories.Interfaces
     {
         IEnumerable<Apartment> GetWithImagesAndClients();
         IEnumerable<Apartment> Search(string term);
+        void RemoveImages(List<ApartmentImage> images);
     }
 }

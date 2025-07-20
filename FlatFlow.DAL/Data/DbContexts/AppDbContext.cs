@@ -18,5 +18,6 @@ namespace FlatFlow.DAL.Data.DbContexts
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

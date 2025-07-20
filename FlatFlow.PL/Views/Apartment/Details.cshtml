@@ -1,0 +1,1086 @@
+﻿@model FlatFlow.PL.ViewModels.ApartmentDetailsViewModel
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "Apartments";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Title - Apartment Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #ffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            border: none;
+            margin: 0;
+            min-height: 100vh;
+            box-shadow: none;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+            border-radius: 0;
+            padding: 30px 20px;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                animation: pulse 4s ease-in-out infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.1;
+            }
+        }
+
+        .sidebar h3 {
+            color: #ffff;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 15px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .main-content {
+            padding: 30px;
+            border-radius: 0;
+        }
+
+        .header-section {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #6b7280, #9ca3af);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .back-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(107, 114, 128, 0.3);
+                color: white;
+                text-decoration: none;
+            }
+
+        .details-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .image-gallery {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .no-image {
+            height: 100%;
+            background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .no-image i {
+                font-size: 4rem;
+                margin-bottom: 15px;
+            }
+
+        .image-thumbnails {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+            .image-thumbnails::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            .image-thumbnails::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 10px;
+            }
+
+            .image-thumbnails::-webkit-scrollbar-thumb {
+                background: rgba(139, 92, 246, 0.6);
+                border-radius: 10px;
+            }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+
+            .thumbnail:hover, .thumbnail.active {
+                border-color: #8b5cf6;
+                transform: scale(1.05);
+            }
+
+        .apartment-info {
+            padding: 30px;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #8b5cf6;
+        }
+
+        .status-badge {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-rented {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            color: #8b5cf6;
+            width: 30px;
+            text-align: center;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .description-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid rgba(147, 51, 234, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clients-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .client-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+            .client-card:hover {
+                border-color: rgba(147, 51, 234, 0.4);
+                background: rgba(139, 92, 246, 0.1);
+                transform: translateY(-2px);
+            }
+
+        .client-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .client-details {
+            flex: 1;
+        }
+
+        .client-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .client-phone {
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .client-commission {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-edit {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .btn-edit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-delete {
+            background: linear-gradient(45deg, #ef4444, #f87171);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .btn-delete:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            }
+
+        .btn-toggle-status {
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .btn-toggle-status:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+            }
+
+        .no-clients {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .no-clients i {
+                font-size: 3rem;
+                margin-bottom: 15px;
+                color: #8b5cf6;
+            }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+            .floating-elements::before {
+                content: '';
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-elements::after {
+                content: '';
+                position: absolute;
+                bottom: 20%;
+                right: 15%;
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 8s ease-in-out infinite reverse;
+            }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Modal for media display */
+        .media-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        .media-modal-content {
+            position: relative;
+            margin: 2% auto;
+            width: 95%;
+            height: 95%;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .media-modal img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .media-modal video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        .media-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 1001;
+        }
+
+            .media-modal-close:hover {
+                color: #8b5cf6;
+            }
+
+        /* Video styling */
+        .main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+            .video-thumbnail video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+            .video-play-overlay:hover {
+                background: rgba(0, 0, 0, 0.8);
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            .video-play-overlay i {
+                color: white;
+                font-size: 2rem;
+                margin-left: 4px;
+            }
+
+        .video-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                border-radius: 0;
+            }
+
+            .main-content {
+                border-radius: 0;
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .header-section {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .price-section {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .image-gallery {
+                height: 300px;
+            }
+
+            .media-modal-content {
+                margin: 5% auto;
+                width: 98%;
+                height: 90%;
+            }
+
+            .media-modal-close {
+                top: 10px;
+                right: 20px;
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <!-- Media Modal -->
+    <div id="mediaModal" class="media-modal">
+        <div class="media-modal-content">
+            <span class="media-modal-close">&times;</span>
+            <img id="modalImage" src="" alt="" style="display: none;">
+            <video id="modalVideo" controls style="display: none;">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <h1 class="page-title">@Model.Title</h1>
+                        <a href="@Url.Action("Index", "Apartment")" class="back-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Apartments
+                        </a>
+                    </div>
+
+                    <!-- Apartment Details -->
+                    <div class="details-container">
+                        <!-- Image Gallery -->
+                        <div class="image-gallery">
+                            @if (Model.Images != null && Model.Images.Any())
+                            {
+
+                                var firstMedia = Model.Images.First();
+                                bool isVideo = firstMedia.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+                                firstMedia.EndsWith(".avi", StringComparison.OrdinalIgnoreCase) ||
+                                firstMedia.EndsWith(".mov", StringComparison.OrdinalIgnoreCase);
+
+
+                                @if (isVideo)
+                                {
+                                    <div class="video-thumbnail">
+                                        <video class="main-video" id="mainVideo" preload="metadata" muted onclick="openMediaModal('@firstMedia', true)">
+                                            <source src="@firstMedia#t=1" type="video/mp4" />
+                                        </video>
+                                        <div class="video-indicator">
+                                            <i class="fas fa-video"></i>
+                                            <span>Video</span>
+                                        </div>
+                                        <div class="video-play-overlay" onclick="openMediaModal('@firstMedia', true)">
+                                            <i class="fas fa-play"></i>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@firstMedia" alt="@Model.Title" class="main-image" id="mainImage" onclick="openMediaModal('@firstMedia', false)" />
+                                }
+
+                                @if (Model.Images.Count > 1)
+                                {
+                                    <div class="image-thumbnails">
+                                        @for (int i = 0; i < Model.Images.Count; i++)
+                                        {
+
+                                            var mediaUrl = Model.Images[i];
+                                            bool isThumbnailVideo = mediaUrl.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+                                            mediaUrl.EndsWith(".avi", StringComparison.OrdinalIgnoreCase) ||
+                                            mediaUrl.EndsWith(".mov", StringComparison.OrdinalIgnoreCase);
+
+
+                                            @if (isThumbnailVideo)
+                                            {
+                                                <div style="position: relative; width: 60px; height: 60px; flex-shrink: 0;">
+                                                    <video class="thumbnail @(i == 0 ? "active" : "")"
+                                                           preload="metadata" muted
+                                                           onclick="changeMainMedia('@mediaUrl', this, true)"
+                                                           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; cursor: pointer;">
+                                                        <source src="@mediaUrl#t=1" type="video/mp4" />
+                                                    </video>
+                                                    <div style="position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="fas fa-play" style="font-size: 8px; color: white; margin-left: 1px;"></i>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src="@mediaUrl" alt="@Model.Title" class="thumbnail @(i == 0 ? "active" : "")"
+                                                     onclick="changeMainMedia('@mediaUrl', this, false)" />
+                                            }
+                                        }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class="fas fa-image"></i>
+                                    <p>No images available</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Apartment Information -->
+                        <div class="apartment-info">
+                            <div class="price-section">
+                                <div class="price">$@Model.Price.ToString("N0")/month</div>
+                                <span class="status-badge @(Model.IsRented ? "badge-rented" : "badge-available")">
+                                    @(Model.IsRented ? "Rented" : "Available")
+                                </span>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Location</div>
+                                    <div class="info-value">@Model.Location</div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Description))
+                            {
+                                <div class="description-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-info-circle"></i>
+                                        Description
+                                    </h3>
+                                    <p>@Model.Description</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Clients Section -->
+                    <div class="clients-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-users"></i>
+                            Clients (@(Model.Clients?.Count ?? 0))
+                        </h3>
+
+                        @if (Model.Clients != null && Model.Clients.Any())
+                        {
+                            @foreach (var client in Model.Clients)
+                            {
+                                <div class="client-card">
+                                    <div class="client-info">
+                                        <div class="client-details">
+                                            <div class="client-name">@client.FullName</div>
+                                            <div class="client-phone">
+                                                <i class="fas fa-phone"></i>
+                                                @client.Phone
+                                            </div>
+                                        </div>
+                                        <div class="client-commission">
+                                            $@client.Commission.ToString("N0")
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-clients">
+                                <i class="fas fa-user-friends"></i>
+                                <h4>No Clients Yet</h4>
+                                <p>This apartment doesn't have any clients assigned yet.</p>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="@Url.Action("Edit", "Apartment", new { id = Model.Id })" class="btn-edit">
+                            <i class="fas fa-edit"></i>
+                            Edit Apartment
+                        </a>
+
+                        <button type="button" class="btn-toggle-status" onclick="toggleRentStatus(@Model.Id, @Model.IsRented.ToString().ToLower())">
+                            <i class="fas fa-@(Model.IsRented ? "unlock" : "lock")"></i>
+                            Mark as @(Model.IsRented ? "Available" : "Rented")
+                        </button>
+
+                        <button type="button" class="btn-delete" onclick="confirmDelete(@Model.Id)">
+                            <i class="fas fa-trash"></i>
+                            Delete Apartment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden form for delete -->
+    <form id="deleteForm" method="post" style="display: none;">
+        @Html.AntiForgeryToken()
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+                // إضافة هذه الـ function للـ JavaScript الموجود
+        function openMediaModal(mediaUrl, isVideo) {
+            const modal = document.getElementById('mediaModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalVideo = document.getElementById('modalVideo');
+
+            // إخفاء كل العناصر أولاً
+            modalImage.style.display = 'none';
+            modalVideo.style.display = 'none';
+
+            if (isVideo) {
+                // إظهار الفيديو
+                modalVideo.src = mediaUrl;
+                modalVideo.style.display = 'block';
+                modalVideo.load(); // تحميل الفيديو
+            } else {
+                // إظهار الصورة
+                modalImage.src = mediaUrl;
+                modalImage.style.display = 'block';
+            }
+
+            // إظهار الـ modal
+            modal.style.display = 'block';
+        }
+        // Complete the JavaScript for media modal and functions
+                function changeMainMedia(mediaUrl, thumbnail, isVideo) {
+                    const mainImageContainer = document.getElementById('mainImage');
+                    const mainVideoContainer = document.getElementById('mainVideo');
+                    const galleryContainer = document.querySelector('.image-gallery');
+
+                    // Remove existing content
+                    if (mainImageContainer) mainImageContainer.remove();
+                    if (mainVideoContainer && mainVideoContainer.parentElement) {
+                        mainVideoContainer.parentElement.remove();
+                    }
+
+                    // Update active thumbnail
+                    document.querySelectorAll('.thumbnail').forEach(thumb => {
+                        if (thumb.tagName === 'VIDEO') {
+                            thumb.parentElement.classList.remove('active');
+                        } else {
+                            thumb.classList.remove('active');
+                        }
+                    });
+
+                    if (thumbnail.tagName === 'VIDEO') {
+                        thumbnail.parentElement.classList.add('active');
+                    } else {
+                        thumbnail.classList.add('active');
+                    }
+
+                    if (isVideo) {
+                        // Create new video element
+                        const videoDiv = document.createElement('div');
+                        videoDiv.className = 'video-thumbnail';
+                        videoDiv.innerHTML = `
+                            <video class="main-video" id="mainVideo" preload="metadata" muted onclick="openMediaModal('${mediaUrl}', true)">
+                                <source src="${mediaUrl}#t=1" type="video/mp4" />
+                            </video>
+                            <div class="video-indicator">
+                                <i class="fas fa-video"></i>
+                                <span>Video</span>
+                            </div>
+                            <div class="video-play-overlay" onclick="openMediaModal('${mediaUrl}', true)">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        `;
+                        galleryContainer.insertBefore(videoDiv, galleryContainer.querySelector('.image-thumbnails'));
+                    } else {
+                        // Create new image element
+                        const img = document.createElement('img');
+                        img.src = mediaUrl;
+                        img.alt = 'Apartment Image';
+                        img.className = 'main-image';
+                        img.id = 'mainImage';
+                        img.onclick = () => openMediaModal(mediaUrl, false);
+                        galleryContainer.insertBefore(img, galleryContainer.querySelector('.image-thumbnails'));
+                    }
+                }
+
+                // Modal event listeners
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modal = document.getElementById('mediaModal');
+                    const closeBtn = document.querySelector('.media-modal-close');
+
+                    // Close modal when clicking the X
+                    closeBtn.onclick = function() {
+                        closeMediaModal();
+                    };
+
+                    // Close modal when clicking outside the media
+                    modal.onclick = function(event) {
+                        if (event.target === modal) {
+                            closeMediaModal();
+                        }
+                    };
+
+                    // Close modal with Escape key
+                    document.addEventListener('keydown', function(event) {
+                        if (event.key === 'Escape' && modal.style.display === 'block') {
+                            closeMediaModal();
+                        }
+                    });
+                });
+
+                function closeMediaModal() {
+                    const modal = document.getElementById('mediaModal');
+                    const modalVideo = document.getElementById('modalVideo');
+
+                    // Pause video if playing
+                    if (modalVideo && !modalVideo.paused) {
+                        modalVideo.pause();
+                    }
+
+                    modal.style.display = 'none';
+
+                    // Clear sources to free memory
+                    const modalImage = document.getElementById('modalImage');
+                    if (modalImage) modalImage.src = '';
+                    if (modalVideo) {
+                        modalVideo.src = '';
+                        modalVideo.load();
+                    }
+                }
+
+                function toggleRentStatus(apartmentId, currentStatus) {
+                    Swal.fire({
+                        title: 'Confirm Status Change',
+                        text: `Are you sure you want to mark this apartment as ${currentStatus ? 'Available' : 'Rented'}?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#7c3aed',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, change it!',
+                        background: 'rgba(26, 26, 46, 0.95)',
+                        color: '#ffffff',
+                        backdrop: 'rgba(0,0,0,0.8)'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/Apartment/ToggleRentStatus/${apartmentId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        background: 'rgba(26, 26, 46, 0.95)',
+                                        color: '#ffffff',
+                                        confirmButtonColor: '#7c3aed'
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                        background: 'rgba(26, 26, 46, 0.95)',
+                                        color: '#ffffff',
+                                        confirmButtonColor: '#ef4444'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Something went wrong. Please try again.',
+                                    icon: 'error',
+                                    background: 'rgba(26, 26, 46, 0.95)',
+                                    color: '#ffffff',
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            });
+                        }
+                    });
+                }
+
+                function confirmDelete(apartmentId) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this! This will permanently delete the apartment and all its data.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, delete it!',
+                        background: 'rgba(26, 26, 46, 0.95)',
+                        color: '#ffffff',
+                        backdrop: 'rgba(0,0,0,0.8)'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.getElementById('deleteForm');
+                            form.action = `/Apartment/Delete/${apartmentId}`;
+                            form.submit();
+                        }
+                    });
+                }
+    </script>
+</body>
+</html>
