@@ -3,5 +3,7 @@
     public interface IClientRepo : IGenericRepo<Client>
     {
         IEnumerable<Client> GetClientsByUserId(string userId);
+        public IQueryable<Client> GetAllWithApartments();
+
     }
 }

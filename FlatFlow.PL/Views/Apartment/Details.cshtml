@@ -830,7 +830,7 @@
                                             </div>
                                         </div>
                                         <div class="client-commission">
-                                            $@client.Commission.ToString("N0")
+                                            $@(client.Commission?.ToString("N0") ?? "0")
                                         </div>
                                     </div>
                                 </div>
