@@ -8,25 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace FlatFlow.PL.Controllers
 {
     [Authorize]
-    public class ApartmentController : Controller
+    public class ApartmentController(
+        IApartmentRepo _apartmentRepo,
+        IWebHostEnvironment _webHostEnvironment,
+        IHttpContextAccessor _httpContextAccessor) : Controller
     {
-        private readonly IApartmentRepo _apartmentRepo;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApartmentController(
-            IApartmentRepo apartmentRepo,
-            IWebHostEnvironment webHostEnvironment,
-            IHttpContextAccessor httpContextAccessor)
-        {
-            _apartmentRepo = apartmentRepo;
-            _webHostEnvironment = webHostEnvironment;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        #region Index Page
-
-        public IActionResult Index(string searchTerm, bool? isRentedFilter, decimal? minPrice, decimal? maxPrice)
+        #region Index Page with Pagination
+        public IActionResult Index(string searchTerm, bool? isRentedFilter, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 9)
         {
             var apartments = string.IsNullOrWhiteSpace(searchTerm)
                 ? _apartmentRepo.GetWithImagesAndClients()
@@ -51,9 +40,15 @@ namespace FlatFlow.PL.Controllers
                 apartments = apartments.Where(a => a.UserId == userId).ToList();
             }
 
+            // Calculate pagination
+            var totalItems = apartments.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var skip = (page - 1) * pageSize;
+            var paginatedApartments = apartments.Skip(skip).Take(pageSize).ToList();
+
             var viewModel = new ApartmentIndexViewModel
             {
-                Apartments = apartments.Select(a =>
+                Apartments = paginatedApartments.Select(a =>
                 {
                     var firstImage = a.ApartmentImages.FirstOrDefault();
                     return new ApartmentCardViewModel
@@ -68,10 +63,21 @@ namespace FlatFlow.PL.Controllers
                     };
                 }).ToList(),
 
+                // Pagination properties
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                HasPreviousPage = page > 1,
+                HasNextPage = page < totalPages,
+
+                // Statistics (for all items, not just current page)
                 TotalApartments = apartments.Count(),
                 AvailableCount = apartments.Count(a => !a.IsRented),
                 RentedCount = apartments.Count(a => a.IsRented),
                 TotalCommission = apartments.SelectMany(a => a.Clients).Sum(c => c.Commission ?? 0),
+
+                // Search filters
                 SearchTerm = searchTerm,
                 IsRentedFilter = isRentedFilter,
                 MinPrice = minPrice,
@@ -80,7 +86,6 @@ namespace FlatFlow.PL.Controllers
 
             return View(viewModel);
         }
-
         #endregion
 
         #region Apartment Details
@@ -91,15 +96,16 @@ namespace FlatFlow.PL.Controllers
 
             if (apartment == null)
             {
-                TempData["Error"] = "Apartment not found.";
+                TempData["ApartmentError"] = "Apartment not found."; 
                 return RedirectToAction("Index");
             }
 
             // Check if the apartment belongs to the current user
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (apartment.UserId != userId)
             {
-                TempData["Error"] = "You don't have permission to view this apartment.";
+                TempData["ApartmentError"] = "You don't have permission to view this apartment.";
                 return RedirectToAction("Index");
             }
 
@@ -158,11 +164,14 @@ namespace FlatFlow.PL.Controllers
                     ApartmentImages = new List<ApartmentImage>()
                 };
 
-                // Handle media uploads (images and videos)
-                if (model.Images != null && model.Images.Any())
+                // Handle media uploads (images and videos) - OPTIONAL NOW
+                if (model.Images != null && model.Images.Any() && model.Images.First().Length > 0)
                 {
                     foreach (var file in model.Images)
                     {
+                        // Skip empty files
+                        if (file.Length == 0) continue;
+
                         // Validate file type
                         var allowedImageExtensions = new[] { ".jpg", ".jpeg", ".png" };
                         var allowedVideoExtensions = new[] { ".mp4", ".mov", ".avi" };
@@ -212,7 +221,7 @@ namespace FlatFlow.PL.Controllers
                 }
 
                 _apartmentRepo.Add(apartment);
-                TempData["Success"] = "Apartment added successfully!";
+                TempData["ApartmentSuccess"] = "Apartment added successfully!";
                 return RedirectToAction("Index");
             }
 
@@ -234,15 +243,16 @@ namespace FlatFlow.PL.Controllers
 
                 if (apartment == null)
                 {
-                    TempData["Error"] = "Apartment not found.";
+                    TempData["ApartmentError"] = "Apartment not found.";
                     return RedirectToAction("Index");
                 }
 
                 // Check user permission
                 var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 if (apartment.UserId != userId)
                 {
-                    TempData["Error"] = "You don't have permission to edit this apartment.";
+                    TempData["ApartmentError"] = "You don't have permission to edit this apartment.";
                     return RedirectToAction("Index");
                 }
 
@@ -347,7 +357,7 @@ namespace FlatFlow.PL.Controllers
                 try
                 {
                     _apartmentRepo.Update(apartment);
-                    TempData["Success"] = "Apartment updated successfully!";
+                    TempData["ApartmentSuccess"] = "Apartment updated successfully!";
                     return RedirectToAction("Details", new { id = apartment.Id });
                 }
                 catch (Exception ex)
@@ -376,15 +386,16 @@ namespace FlatFlow.PL.Controllers
 
             if (apartment == null)
             {
-                TempData["Error"] = "Apartment not found.";
+                TempData["ApartmentError"] = "Apartment not found.";
                 return RedirectToAction("Index");
             }
 
             // Check if the apartment belongs to the current user
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (apartment.UserId != userId)
             {
-                TempData["Error"] = "You don't have permission to edit this apartment.";
+                TempData["ApartmentError"] = "You don't have permission to edit this apartment.";
                 return RedirectToAction("Index");
             }
 
@@ -468,15 +479,16 @@ namespace FlatFlow.PL.Controllers
 
             if (apartment == null)
             {
-                TempData["Error"] = "Apartment not found.";
+                TempData["ApartmentError"] = "Apartment not found.";
                 return RedirectToAction("Index");
             }
 
             // Check if the apartment belongs to the current user
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (apartment.UserId != userId)
             {
-                TempData["Error"] = "You don't have permission to delete this apartment.";
+                TempData["ApartmentError"] = "You don't have permission to delete this apartment.";
                 return RedirectToAction("Index");
             }
 
@@ -503,7 +515,7 @@ namespace FlatFlow.PL.Controllers
 
             if (apartment == null)
             {
-                TempData["Error"] = "Apartment not found.";
+                TempData["ApartmentError"] = "Apartment not found.";
                 return RedirectToAction("Index");
             }
 
@@ -511,14 +523,14 @@ namespace FlatFlow.PL.Controllers
             var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (apartment.UserId != userId)
             {
-                TempData["Error"] = "You don't have permission to delete this apartment.";
+                TempData["ApartmentError"] = "You don't have permission to delete this apartment.";
                 return RedirectToAction("Index");
             }
 
             // Check if apartment has clients
             if (apartment.Clients != null && apartment.Clients.Any())
             {
-                TempData["Error"] = "Cannot delete apartment that has clients assigned to it.";
+                TempData["ApartmentError"] = "Cannot delete apartment that has clients assigned to it.";
                 return RedirectToAction("Index");
             }
 
@@ -533,7 +545,7 @@ namespace FlatFlow.PL.Controllers
             }
 
             _apartmentRepo.Remove(apartment);
-            TempData["Success"] = "Apartment deleted successfully!";
+            TempData["ApartmentSuccess"] = "Apartment deleted successfully!";
             return RedirectToAction("Index");
         }
 

@@ -33,6 +33,7 @@ namespace FlatFlow.PL
             builder.Services.AddScoped<IGenericRepo<Client>, GenericRepo<Client>>();
             builder.Services.AddScoped<IGenericRepo<Apartment>, GenericRepo<Apartment>>();
             builder.Services.AddScoped<IApartmentRepo, ApartmentRepo>();
+            builder.Services.AddScoped<IClientRepo, ClientRepo>();
 
             // Authentication Configuration
             builder.Services.AddAuthentication(options =>

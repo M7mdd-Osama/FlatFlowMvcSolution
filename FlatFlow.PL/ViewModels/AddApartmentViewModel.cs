@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 
 namespace FlatFlow.PL.ViewModels
 {
@@ -18,7 +17,7 @@ namespace FlatFlow.PL.ViewModels
         public string Location { get; set; } = string.Empty;
 
         [StringLength(1000)]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         [Display(Name = "Apartment Images")]
         public List<IFormFile>? Images { get; set; }

@@ -4,6 +4,7 @@ using FlatFlow.DAL.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlatFlow.DAL.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720181146_nullable Note")]
+    partial class nullableNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +62,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Apartments", (string)null);
+                    b.ToTable("Apartments");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.ApartmentModel.ApartmentImage", b =>
@@ -85,7 +88,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("ApartmentId");
 
-                    b.ToTable("ApartmentImages", (string)null);
+                    b.ToTable("ApartmentImages");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.Client", b =>
@@ -96,7 +99,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ApartmentId")
+                    b.Property<int>("ApartmentId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Commission")
@@ -131,7 +134,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.FacebookGroup", b =>
@@ -154,7 +157,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FacebookGroups", (string)null);
+                    b.ToTable("FacebookGroups");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.Identity.User", b =>
@@ -260,7 +263,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("ApartmentGroupPosts", (string)null);
+                    b.ToTable("ApartmentGroupPosts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -422,7 +425,9 @@ namespace FlatFlow.DAL.Data.Migrations
                 {
                     b.HasOne("FlatFlow.DAL.Models.ApartmentModel.Apartment", "Apartment")
                         .WithMany("Clients")
-                        .HasForeignKey("ApartmentId");
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FlatFlow.DAL.Models.Identity.User", "User")
                         .WithMany("Clients")

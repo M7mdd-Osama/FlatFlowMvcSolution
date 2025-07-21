@@ -39,18 +39,91 @@
             margin: 0;
             min-height: 100vh;
             box-shadow: none;
-            padding: 20px;
         }
 
-        .form-container {
-            background: rgba(255, 255, 255, 0.05);
+        .sidebar {
+            background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+            border-radius: 0;
+            padding: 30px 20px;
+            min-height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                animation: pulse 4s ease-in-out infinite;
+            }
+
+        @@keyframes pulse {
+            0%, 100%
+
+        {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.1;
+        }
+
+        }
+
+        .sidebar h3 {
+            color: #ffff;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 15px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateX(5px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .main-content {
+            padding: 30px;
+            border-radius: 0;
+        }
+
+        .header-section {
+            background: rgba(124, 58, 237, 0.1);
             border: 1px solid rgba(147, 51, 234, 0.3);
             border-radius: 20px;
-            padding: 40px;
+            padding: 25px;
+            margin-bottom: 30px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
         }
 
         .page-title {
@@ -59,31 +132,61 @@
             background: linear-gradient(45deg, #8b5cf6, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            text-align: center;
+            margin-bottom: 10px;
         }
 
-        .form-label {
-            color: #ffffff;
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+            .breadcrumb-item.active {
+                color: #8b5cf6;
+            }
+
+            .breadcrumb-item + .breadcrumb-item::before {
+                content: ">";
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 10px;
-            display: block;
-            font-size: 1.1rem;
+            color: #8b5cf6;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+            padding-bottom: 10px;
         }
 
         .form-control, .form-select {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(147, 51, 234, 0.4);
             color: #ffffff;
-            border-radius: 12px;
-            padding: 15px 20px;
-            font-size: 1rem;
+            border-radius: 10px;
+            padding: 12px 16px;
             transition: all 0.3s ease;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
             .form-control:focus, .form-select:focus {
-                background: rgba(255, 255, 255, 0.12);
+                background: rgba(255, 255, 255, 0.1);
                 border-color: #8b5cf6;
                 box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
                 color: #ffffff;
@@ -93,13 +196,24 @@
                 color: rgba(255, 255, 255, 0.6);
             }
 
+        .form-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .optional-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
         .btn-primary {
             background: linear-gradient(45deg, #7c3aed, #8b5cf6);
             border: none;
-            border-radius: 12px;
-            padding: 15px 30px;
+            border-radius: 10px;
+            padding: 12px 30px;
             font-weight: 600;
-            font-size: 1.1rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
         }
@@ -112,28 +226,93 @@
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(147, 51, 234, 0.3);
-            border-radius: 12px;
-            padding: 15px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 30px;
             font-weight: 600;
-            font-size: 1.1rem;
             color: #ffffff;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
         }
 
             .btn-secondary:hover {
-                background: rgba(255, 255, 255, 0.15);
-                border-color: rgba(147, 51, 234, 0.5);
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.5);
                 color: #ffffff;
                 transform: translateY(-2px);
             }
 
-        .media-upload-container {
-            margin-bottom: 25px;
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
+            .floating-elements::before {
+                content: '';
+                position: absolute;
+                top: 10%;
+                left: 10%;
+                width: 100px;
+                height: 100px;
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-elements::after {
+                content: '';
+                position: absolute;
+                bottom: 20%;
+                right: 15%;
+                width: 150px;
+                height: 150px;
+                background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                animation: float 8s ease-in-out infinite reverse;
+            }
+
+        @@keyframes float {
+            0%, 100%
+
+        {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+
+        }
+
+        .text-danger {
+            color: #ef4444 !important;
+            font-size: 0.875rem;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Media Upload Styles */
         .media-upload-area {
             background: rgba(0, 0, 0, 0.2);
             border: 2px dashed rgba(147, 51, 234, 0.5);
@@ -250,25 +429,32 @@
                 transform: scale(1.1);
             }
 
-        .text-danger {
-            color: #ff6b6b !important;
-            font-size: 0.9rem;
-            margin-top: 5px;
+        .file-counter {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            text-align: center;
+            color: #a78bfa;
+            font-weight: 600;
         }
 
-        .alert {
-            background: rgba(220, 53, 69, 0.1);
-            border: 1px solid rgba(220, 53, 69, 0.3);
-            border-radius: 12px;
-            color: #ff6b6b;
-            padding: 15px;
-            margin-bottom: 20px;
+        .progress-bar {
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+            display: none;
         }
 
-        .alert-success {
-            background: rgba(25, 135, 84, 0.1);
-            border-color: rgba(25, 135, 84, 0.3);
-            color: #51cf66;
+        .progress-fill {
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
         }
 
         .loading-overlay {
@@ -306,43 +492,23 @@
 
         }
 
-        .file-counter {
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 10px;
-            text-align: center;
-            color: #a78bfa;
-            font-weight: 600;
-        }
-
-        .progress-bar {
-            background: rgba(139, 92, 246, 0.2);
-            border-radius: 10px;
-            height: 20px;
-            margin: 10px 0;
-            overflow: hidden;
-            display: none;
-        }
-
-        .progress-fill {
-            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-
         @@media (max-width: 768px) {
-            .page-title
+            .sidebar
 
         {
+            border-radius: 0;
+        }
+
+        .main-content {
+            border-radius: 0;
+        }
+
+        .page-title {
             font-size: 2rem;
         }
 
         .form-container {
-            padding: 25px;
+            padding: 20px;
         }
 
         }
@@ -353,115 +519,155 @@
         <div class="loading-spinner"></div>
     </div>
 
+    <div class="floating-elements"></div>
+
     <div class="main-container">
-        <div class="form-container">
-            <h1 class="page-title">
-                <i class="fas fa-plus-circle"></i> Add New Apartment
-            </h1>
+        <div class="row g-0 h-100">
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="alert alert-danger">
-                    <strong>Please fix the following errors:</strong>
-                    <ul class="mb-0 mt-2">
-                        @foreach (var modelState in ViewData.ModelState.Values)
-                        {
-                            foreach (var error in modelState.Errors)
-                            {
-                                <li>@error.ErrorMessage</li>
-                            }
-                        }
-                    </ul>
-                </div>
-            }
+            @await Html.PartialAsync("_Sidebar")
 
-            <form id="apartmentForm" method="post" action="@Url.Action("Add", "Apartment")" enctype="multipart/form-data">
-                @Html.AntiForgeryToken()
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label">Title</label>
-                        <input type="text" name="Title" class="form-control" placeholder="Enter apartment title"
-                               value="@Model?.Title" required>
-                        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Apartment
+                        </h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Apartment")" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Add Apartment</li>
+                            </ol>
+                        </nav>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Monthly Rent ($)</label>
-                        <input type="number" name="Price" class="form-control" placeholder="Enter monthly rent"
-                               step="0.01" min="0" value="@Model?.Price" required>
-                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <label class="form-label">Location</label>
-                        <input type="text" name="Location" class="form-control" placeholder="Enter apartment location"
-                               value="@Model?.Location" required>
-                        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <label class="form-label">Description</label>
-                        <textarea name="Description" class="form-control" placeholder="Enter apartment description"
-                                  rows="4" required>@Model?.Description</textarea>
-                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="media-upload-container">
-                    <label class="form-label">Apartment Media (Images & Videos)</label>
-                    <div class="media-upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Upload Images & Videos</p>
-                        <small>Images: PNG, JPG, JPEG | Videos: MP4, MOV, AVI | Max 100MB each</small>
-                        <button type="button" class="upload-btn" onclick="openFileDialog()">
-                            <i class="fas fa-folder-open"></i> Choose Files
-                        </button>
-                        <input type="file" name="Images" id="mediaFiles" multiple
-                               accept="image/jpeg,image/jpg,image/png,video/mp4,video/mov,video/avi"
-                               style="display: none;">
-                    </div>
-
-                    <div class="progress-bar" id="progressBar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-
-                    <div class="preview-container">
-                        <div class="file-counter" id="fileCounter" style="display: none;">
-                            <i class="fas fa-info-circle"></i> <span id="fileCountText">0 files selected</span>
+                    <!-- Validation Errors -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    foreach (var error in modelState.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
                         </div>
-                        <div class="preview-media" id="mediaPreview"></div>
-                        <button type="button" class="btn btn-danger mt-2" onclick="clearAllMedia()" style="display: none;" id="clearBtn">
-                            <i class="fas fa-trash"></i> Clear All Files
-                        </button>
-                    </div>
-                    @Html.ValidationMessageFor(m => m.Images, "", new { @class = "text-danger" })
-                </div>
+                    }
 
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="d-flex gap-3">
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i class="fas fa-save"></i> Save Apartment
-                            </button>
-                            <a href="@Url.Action("Index", "Apartment")" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to List
-                            </a>
-                        </div>
+                    <!-- Form Container -->
+                    <div class="form-container">
+                        <form id="apartmentForm" method="post" action="@Url.Action("Add", "Apartment")" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+
+                            <!-- Basic Information Section -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Basic Information
+                                </h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Title</label>
+                                        @Html.LabelFor(m => m.Title, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter apartment title" })
+                                        @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Monthly Rent ($)</label>
+                                        @Html.LabelFor(m => m.Price, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", placeholder = "Enter monthly rent", step = "0.1", min = "0" })
+                                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="form-label">Location</label>
+                                        @Html.LabelFor(m => m.Location, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter apartment location" })
+                                        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description Section -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-align-left me-2"></i>
+                                    Description
+                                </h3>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="form-label">Description</label>
+                                        @Html.LabelFor(m => m.Description, new { @class = "form-label" })
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "4", placeholder = "Enter apartment description" })
+                                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Media Upload Section -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-images me-2"></i>
+                                    Apartment Media <span class="optional-label">(Optional)</span>
+                                </h3>
+
+                                <div class="media-upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Upload Images & Videos (Optional)</p>
+                                    <small>Images: PNG, JPG, JPEG | Videos: MP4, MOV, AVI | Max 100MB each</small>
+                                    <button type="button" class="upload-btn" onclick="openFileDialog()">
+                                        <i class="fas fa-folder-open me-1"></i> Choose Files
+                                    </button>
+                                    <input type="file" name="Images" id="mediaFiles" multiple
+                                           accept="image/jpeg,image/jpg,image/png,video/mp4,video/mov,video/avi"
+                                           style="display: none;">
+                                </div>
+
+                                <div class="progress-bar" id="progressBar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+
+                                <div class="preview-container">
+                                    <div class="file-counter" id="fileCounter" style="display: none;">
+                                        <i class="fas fa-info-circle"></i> <span id="fileCountText">0 files selected</span>
+                                    </div>
+                                    <div class="preview-media" id="mediaPreview"></div>
+                                    <button type="button" class="btn btn-danger mt-2" onclick="clearAllMedia()" style="display: none;" id="clearBtn">
+                                        <i class="fas fa-trash"></i> Clear All Files
+                                    </button>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Images, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-3">
+                                <a href="@Url.Action("Index", "Apartment")" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>
+                                    Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Save Apartment
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         let selectedFiles = [];
-        const maxFileSize = 100 * 1024 * 1024; // 100MB - Updated!
+        const maxFileSize = 100 * 1024 * 1024; // 100MB
         const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi'];
         const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes];
@@ -480,19 +686,16 @@
             let errors = [];
 
             newFiles.forEach(file => {
-                // Check file type
                 if (!allowedTypes.includes(file.type)) {
                     errors.push(`${file.name}: File type not supported`);
                     return;
                 }
 
-                // Check file size - Now 100MB for all files
                 if (file.size > maxFileSize) {
                     errors.push(`${file.name}: File size exceeds 100MB`);
                     return;
                 }
 
-                // Check if file already exists
                 const exists = selectedFiles.some(existingFile =>
                     existingFile.name === file.name && existingFile.size === file.size
                 );
@@ -502,10 +705,8 @@
                 }
             });
 
-            // Add valid files to selection
             selectedFiles = [...selectedFiles, ...validFiles];
 
-            // Show errors if any
             if (errors.length > 0) {
                 alert('Errors found:\n' + errors.join('\n'));
             }
@@ -529,7 +730,6 @@
                     previewItem.className = 'preview-item';
 
                     if (allowedImageTypes.includes(file.type)) {
-                        // Create image preview
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const img = document.createElement('img');
@@ -541,7 +741,6 @@
                         reader.readAsDataURL(file);
 
                     } else if (allowedVideoTypes.includes(file.type)) {
-                        // Create video preview
                         const video = document.createElement('video');
                         video.className = 'preview-video';
                         video.muted = true;
@@ -629,7 +828,6 @@
             addFiles(files);
         });
 
-        // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             uploadArea.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
@@ -640,32 +838,26 @@
             e.stopPropagation();
         }
 
-        // Form submission with progress
+        // Form submission
         document.getElementById('apartmentForm').addEventListener('submit', function(e) {
-            if (selectedFiles.length === 0) {
-                alert('Please select at least one file');
-                e.preventDefault();
-                return;
+            if (selectedFiles.length > 0) {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                document.getElementById('progressBar').style.display = 'block';
+
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress >= 90) {
+                        progress = 90;
+                        clearInterval(progressInterval);
+                    }
+                    document.getElementById('progressFill').style.width = progress + '%';
+                }, 200);
             }
 
-            // Show loading overlay
-            document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('submitBtn').disabled = true;
-            document.getElementById('progressBar').style.display = 'block';
-
-            // Simulate upload progress (you can replace this with real progress tracking)
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress >= 90) {
-                    progress = 90;
-                    clearInterval(progressInterval);
-                }
-                document.getElementById('progressFill').style.width = progress + '%';
-            }, 200);
         });
 
-        // Hide loading on page load
         window.addEventListener('load', function() {
             document.getElementById('loadingOverlay').style.display = 'none';
         });

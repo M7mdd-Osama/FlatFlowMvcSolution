@@ -12,6 +12,8 @@
     <title>Clients - FlatFlow</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -358,48 +360,71 @@
                 animation: float 8s ease-in-out infinite reverse;
             }
 
-        .add-apartment-btn {
-            display: flex;
-            justify-content: center;
+        /* Stats Cards Styles */
+        .stats-section {
             margin-top: 20px;
+            margin-bottom: 30px;
         }
 
-        .floating-add-btn {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #10b981, #34d399);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            cursor: pointer;
+        .stats-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
             transition: all 0.3s ease;
-            z-index: 10;
-            position: relative;
+            backdrop-filter: blur(10px);
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-            .floating-add-btn:hover {
-                transform: scale(1.1);
-                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+            .stats-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
+                border-color: rgba(147, 51, 234, 0.5);
             }
 
-            .floating-add-btn i {
-                font-size: 1.8rem;
-                color: white;
+        .stats-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #8b5cf6;
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 3px;
+            line-height: 1.2;
+        }
+
+        .stats-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            line-height: 1.1;
+        }
+
+        @@media (max-width: 768px) {
+            .stats-card {
+                height: 100px;
+                padding: 10px;
             }
-            .floating-add-btn::before {
-                content: '';
-                position: absolute;
-                top: -10%;
-                left: -10%;
-                width: 120%;
-                height: 120%;
-                background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 70%);
-                border-radius: 50%;
-                animation: pulse 2s ease-in-out infinite;
-                z-index: -1;
+
+            .stats-icon {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
             }
+
+            .stats-number {
+                font-size: 1.2rem;
+            }
+
+            .stats-label {
+                font-size: 0.7rem;
+            }
+        }
 
         @@keyframes float {
             0%, 100% {
@@ -452,6 +477,42 @@
             font-weight: 600;
             color: white;
             font-size: 1.1rem;
+        }
+
+        /* Custom SweetAlert2 styles */
+        .swal2-popup {
+            background: rgba(26, 26, 46, 0.95) !important;
+            border: 1px solid rgba(147, 51, 234, 0.3) !important;
+            border-radius: 15px !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
+        .swal2-title {
+            color: #ffffff !important;
+        }
+
+        .swal2-html-container {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .swal2-confirm {
+            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+
+            .swal2-confirm:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
+            }
+
+        .swal2-cancel {
+            background: rgba(107, 114, 128, 0.8) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
         }
 
         @@media (max-width: 768px) {
@@ -519,23 +580,65 @@
                         </div>
                     </div>
 
-                    <!-- Success Message -->
-                    @if (TempData["Success"] != null)
+                    <!-- Success Message - Only for Client operations -->
+                    @if (TempData["ClientSuccess"] != null)
                     {
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle me-2"></i>
-                            @TempData["Success"]
+                            @TempData["ClientSuccess"]
                         </div>
                     }
 
-                    <!-- Error Message -->
-                    @if (TempData["Error"] != null)
+                    <!-- Error Message - Only for Client operations -->
+                    @if (TempData["ClientError"] != null)
                     {
                         <div class="alert alert-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
-                            @TempData["Error"]
+                            @TempData["ClientError"]
                         </div>
                     }
+
+                    <!-- Stats Cards Section -->
+                    <div class="stats-section mb-4">
+                        <div class="row g-3">
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stats-number">@ViewBag.ClientStats.TotalClients</div>
+                                    <div class="stats-label">Total Clients</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="stats-number">@ViewBag.ClientStats.ActiveClients</div>
+                                    <div class="stats-label">Active</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-times-circle"></i>
+                                    </div>
+                                    <div class="stats-number">@ViewBag.ClientStats.InactiveClients</div>
+                                    <div class="stats-label">Inactive</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="stats-number">$@ViewBag.ClientStats.TotalCommission.ToString("N0")</div>
+                                    <div class="stats-label">Total Commission</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Clients Container -->
                     <div class="clients-container">
@@ -651,9 +754,9 @@
                                                             <a href="@Url.Action("Edit", "Client", new { id = client.Id })" class="btn btn-warning btn-sm" title="Edit Client">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
-                                                            <a href="@Url.Action("Delete", "Client", new { id = client.Id })" class="btn btn-danger btn-sm" title="Delete Client" onclick="return confirm('Are you sure you want to delete this client?')">
+                                                            <button class="btn btn-danger btn-sm" title="Delete Client" onclick="confirmDelete(@client.Id, '@client.FullName')">
                                                                 <i class="fas fa-trash"></i>
-                                                            </a>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -681,72 +784,184 @@
         </div>
     </div>
 
+    <!-- Hidden form for delete operation -->
+    <form id="deleteForm" method="post" style="display: none;">
+        @Html.AntiForgeryToken()
+    </form>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
     <script>
         // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
+                document.getElementById('searchInput').addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('tbody tr');
 
-            rows.forEach(row => {
-                const name = row.cells[0].textContent.toLowerCase();
-                const phone = row.cells[1].textContent.toLowerCase();
+                    rows.forEach(row => {
+                        const name = row.cells[0].textContent.toLowerCase();
+                        const phone = row.cells[1].textContent.toLowerCase();
 
-                if (name.includes(searchTerm) || phone.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+                        if (name.includes(searchTerm) || phone.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Status filter
+                document.getElementById('statusFilter').addEventListener('change', function() {
+                    const selectedStatus = this.value;
+                    const rows = document.querySelectorAll('tbody tr');
+
+                    rows.forEach(row => {
+                        const status = row.cells[3].textContent.trim();
+
+                        if (selectedStatus === '' || status === selectedStatus) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Sort functionality
+                document.getElementById('sortBy').addEventListener('change', function() {
+                    const sortBy = this.value;
+                    const tbody = document.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                    rows.sort((a, b) => {
+                        let aValue, bValue;
+
+                        switch (sortBy) {
+                            case 'name':
+                                aValue = a.cells[0].textContent.trim().toLowerCase();
+                                bValue = b.cells[0].textContent.trim().toLowerCase();
+                                return aValue.localeCompare(bValue);
+
+                            case 'date':
+                                // Assuming you want to sort by creation date (you might need to add a hidden date field)
+                                // For now, sorting by name as fallback
+                                aValue = a.cells[0].textContent.trim().toLowerCase();
+                                bValue = b.cells[0].textContent.trim().toLowerCase();
+                                return aValue.localeCompare(bValue);
+
+                            case 'commission':
+                                // Extract commission values
+                                aValue = parseFloat(a.cells[4].textContent.replace(/[^0-9.-]+/g, '') || '0');
+                                bValue = parseFloat(b.cells[4].textContent.replace(/[^0-9.-]+/g, '') || '0');
+                                return bValue - aValue; // Descending order
+
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    // Clear tbody and append sorted rows
+                    tbody.innerHTML = '';
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+
+        // Alternative: Change only the JavaScript to use DeleteConfirmed
+        function confirmDelete(clientId, clientName) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You won't be able to revert this! This will permanently delete ${clientName} and all their data.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                background: 'rgba(26, 26, 46, 0.95)',
+                color: '#ffffff',
+                backdrop: 'rgba(0,0,0,0.8)',
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm',
+                    cancelButton: 'swal2-cancel'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while we delete the client.',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        background: 'rgba(26, 26, 46, 0.95)',
+                        color: '#ffffff',
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Submit the delete form - Changed to use DeleteConfirmed
+                    const form = document.getElementById('deleteForm');
+                    form.action = `/Client/DeleteConfirmed/${clientId}`;
+                    form.submit();
                 }
             });
-        });
+        }
+                // Combined filter function (search + status)
+                function applyFilters() {
+                    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                    const selectedStatus = document.getElementById('statusFilter').value;
+                    const rows = document.querySelectorAll('tbody tr');
 
-        // Status filter
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            const selectedStatus = this.value;
-            const rows = document.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const name = row.cells[0].textContent.toLowerCase();
+                        const phone = row.cells[1].textContent.toLowerCase();
+                        const status = row.cells[3].textContent.trim();
 
-            rows.forEach(row => {
-                const status = row.cells[3].textContent.trim();
+                        const matchesSearch = name.includes(searchTerm) || phone.includes(searchTerm);
+                        const matchesStatus = selectedStatus === '' || status === selectedStatus;
 
-                if (selectedStatus === '' || status === selectedStatus) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-
-        // Sort functionality
-        document.getElementById('sortBy').addEventListener('change', function() {
-            const sortBy = this.value;
-            const tbody = document.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-
-            rows.sort((a, b) => {
-                let aValue, bValue;
-
-                switch(sortBy) {
-                    case 'name':
-                        aValue = a.cells[0].textContent.toLowerCase();
-                        bValue = b.cells[0].textContent.toLowerCase();
-                        break;
-                    case 'commission':
-                        aValue = parseFloat(a.cells[4].textContent.replace(/[^0-9.-]+/g,"")) || 0;
-                        bValue = parseFloat(b.cells[4].textContent.replace(/[^0-9.-]+/g,"")) || 0;
-                        break;
-                    default:
-                        return 0;
+                        if (matchesSearch && matchesStatus) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
                 }
 
-                if (sortBy === 'commission') {
-                    return bValue - aValue; // Descending for commission
-                } else {
-                    return aValue > bValue ? 1 : -1; // Ascending for name
-                }
-            });
+                // Update event listeners to use combined filter
+                document.getElementById('searchInput').addEventListener('input', applyFilters);
+                document.getElementById('statusFilter').addEventListener('change', applyFilters);
 
-            rows.forEach(row => tbody.appendChild(row));
-        });
+                // Auto-hide alerts after 5 seconds
+                document.addEventListener('DOMContentLoaded', function() {
+                    const alerts = document.querySelectorAll('.alert');
+                    alerts.forEach(alert => {
+                        setTimeout(() => {
+                            alert.style.opacity = '0';
+                            alert.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                alert.remove();
+                            }, 500);
+                        }, 5000);
+                    });
+                });
+
+                // Add some visual feedback on button hover
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deleteButtons = document.querySelectorAll('.btn-danger');
+
+                    deleteButtons.forEach(button => {
+                        button.addEventListener('mouseenter', function() {
+                            this.style.transform = 'scale(1.1)';
+                        });
+
+                        button.addEventListener('mouseleave', function() {
+                            this.style.transform = 'scale(1)';
+                        });
+                    });
+                });
     </script>
 </body>
 </html>

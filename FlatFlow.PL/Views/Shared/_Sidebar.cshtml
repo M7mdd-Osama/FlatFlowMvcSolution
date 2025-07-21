@@ -36,11 +36,6 @@
                 </form>
             </div>
 
-            <div class="add-apartment-btn">
-                <div class="floating-add-btn" onclick="window.location.href='/Apartment/Add'">
-                    <i class="fas fa-plus"></i>
-                </div>
-            </div>
         </nav>
     </div>
 </div>
@@ -93,35 +88,13 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
+        position: relative; /* Add this */
+        z-index: 100; /* Add this */
     }
 
         .sidebar .nav {
             display: flex;
             flex-direction: column;
-        }
-
-    .add-apartment-btn {
-        margin: 20px 0;
-    }
-
-    .floating-add-btn {
-        background: linear-gradient(45deg, #007bff, #0056b3);
-        color: white;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 0 auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-        .floating-add-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
     /* Responsive */
@@ -131,11 +104,6 @@
     {
         padding: 8px 12px;
         font-size: 12px;
-    }
-
-    .floating-add-btn {
-        width: 45px;
-        height: 45px;
     }
 
     }

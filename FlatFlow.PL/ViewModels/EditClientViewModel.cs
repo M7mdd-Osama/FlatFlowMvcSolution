@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FlatFlow.PL.ViewModels
 {
-    public class AddClientViewModel
+    public class EditClientViewModel
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Full name is required")]
         [StringLength(100, ErrorMessage = "Full name cannot exceed 100 characters")]
         public string FullName { get; set; }

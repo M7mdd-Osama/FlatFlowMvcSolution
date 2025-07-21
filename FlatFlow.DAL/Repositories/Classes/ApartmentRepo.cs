@@ -1,7 +1,6 @@
 ﻿using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Models.ApartmentModel;
 using FlatFlow.DAL.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace FlatFlow.DAL.Repositories.Classes
 {
@@ -32,6 +31,11 @@ namespace FlatFlow.DAL.Repositories.Classes
         {
             dbContext.ApartmentImages.RemoveRange(images);
             dbContext.SaveChanges();
+        }
+
+        public IEnumerable<Apartment> GetApartmentsByUserId(string userId)
+        {
+            return dbContext.Apartments.Where(a => a.UserId == userId);
         }
     }
 }

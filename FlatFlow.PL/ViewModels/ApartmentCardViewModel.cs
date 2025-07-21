@@ -9,6 +9,5 @@
         public bool IsRented { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
         public bool IsVideo { get; set; }
-
     }
 }
