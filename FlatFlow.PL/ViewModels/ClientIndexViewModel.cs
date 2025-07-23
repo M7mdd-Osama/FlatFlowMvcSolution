@@ -14,9 +14,5 @@ namespace FlatFlow.PL.ViewModels
         public int StartItem => (CurrentPage - 1) * PageSize + 1;
         public int EndItem => Math.Min(CurrentPage * PageSize, TotalItems);
 
-        // Search and filter properties
-        public string SearchTerm { get; set; }
-        public string StatusFilter { get; set; }
-        public string SortBy { get; set; } = "name";
     }
 }

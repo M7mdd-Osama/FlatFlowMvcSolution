@@ -1,0 +1,163 @@
+﻿@model FacebookGroupEditViewModel
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "FacebookGroups";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit @Model.GroupName - Facebook Group</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/editfacebookgroupstyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "FacebookGroup")">Facebook Groups</a></li>
+                            <li class="breadcrumb-item"><a href="@Url.Action("Details", "FacebookGroup", new { id = Model.Id })">@Model.GroupName</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Alerts -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-3" style="font-size: 1.2rem;"></i>
+                                <div>
+                                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.2rem;"></i>
+                                <div>
+                                    <strong>Please fix the following errors:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        @foreach (var modelState in ViewData.ModelState.Values)
+                                        {
+                                            foreach (var error in modelState.Errors)
+                                            {
+                                                <li>@error.ErrorMessage</li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Edit Form Card -->
+                    <div class="edit-form-card">
+                        <div class="form-header">
+                            <div class="form-avatar">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="form-title">
+                                <h2>Edit Facebook Group</h2>
+                                <div class="form-subtitle">
+                                    <i class="fas fa-pen"></i>
+                                    <span>Update group information</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form asp-action="Edit" method="post" id="editForm" novalidate>
+                            @Html.AntiForgeryToken()
+                            <input asp-for="Id" type="hidden" />
+
+                            <!-- Group Name Field -->
+                            <div class="form-group">
+                                <label asp-for="GroupName" class="form-label">
+                                    <i class="fas fa-users"></i>
+                                    Group Name
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="GroupName"
+                                           class="form-control"
+                                           placeholder="Enter Facebook group name"
+                                           autocomplete="off"
+                                           maxlength="200" />
+                                    <i class="input-icon fas fa-users"></i>
+                                </div>
+                                <span asp-validation-for="GroupName" class="invalid-feedback validation-message"></span>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    Enter the display name for this Facebook group
+                                </div>
+                            </div>
+
+                            <!-- Group Link Field -->
+                            <div class="form-group">
+                                <label asp-for="GroupLink" class="form-label">
+                                    <i class="fas fa-link"></i>
+                                    Group Link
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="GroupLink"
+                                           class="form-control"
+                                           placeholder="https://www.facebook.com/groups/..."
+                                           autocomplete="off" />
+                                    <i class="input-icon fas fa-external-link-alt"></i>
+                                </div>
+                                <span asp-validation-for="GroupLink" class="invalid-feedback validation-message"></span>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    Enter the complete URL of the Facebook group
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="saveBtn">
+                                    <span class="btn-text">
+                                        <i class="fas fa-save"></i>
+                                        Update Group
+                                    </span>
+                                </button>
+
+                                <a href="@Url.Action("Details", "FacebookGroup", new { id = Model.Id })"
+                                   class="btn btn-secondary">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </a>
+
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/editfacebookgroupjs.js"></script>
+</body>
+</html>

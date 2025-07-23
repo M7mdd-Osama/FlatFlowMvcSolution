@@ -1,0 +1,212 @@
+﻿@using FlatFlow.PL.Helpers
+@model FlatFlow.DAL.Models.Identity.User
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "Profile";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/settingsprofilestyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <h1 class="page-title mb-0">Profile Settings</h1>
+                        <p class="text-light opacity-75 mb-0">Update your personal information and profile details</p>
+                    </div>
+
+                    <!-- Success Message -->
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-3" style="font-size: 1.2rem; color: #10b981;"></i>
+                                <div>
+                                    <strong>Success!</strong> @TempData["Success"]
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <!-- Profile Form Card -->
+                    <div class="profile-card">
+                        <!-- Profile Header -->
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                @if (!string.IsNullOrEmpty(Model?.FirstName))
+                                {
+                                    <span>@Model.FirstName.Substring(0, 1).ToUpper()@(!string.IsNullOrEmpty(Model.LastName) ? Model.LastName.Substring(0, 1).ToUpper() : "")</span>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-user"></i>
+                                }
+                            </div>
+                            <div class="profile-name">
+                                @if (!string.IsNullOrEmpty(Model?.FirstName) || !string.IsNullOrEmpty(Model?.LastName))
+                                {
+                                    @Model?.FirstName @Model?.LastName
+                                }
+                                else
+                                {
+                                    <span>Complete Your Profile</span>
+                                }
+                            </div>
+                            <div class="profile-email">@Model?.Email</div>
+                        </div>
+
+                        <!-- Profile Form -->
+                        <div class="profile-body">
+                            <form method="post" asp-action="Profile">
+                                @Html.AntiForgeryToken()
+
+                                <!-- First Name -->
+                                <div class="form-group">
+                                    <label class="form-label" for="FirstName">
+                                        <i class="fas fa-user"></i>
+                                        First Name *
+                                    </label>
+                                    <input asp-for="FirstName"
+                                           class="form-control @(ViewData.ModelState.IsValidField("FirstName") ? "" : "is-invalid")"
+                                           placeholder="Enter your first name"
+                                           required />
+                                    <span asp-validation-for="FirstName" class="invalid-feedback"></span>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="form-group">
+                                    <label class="form-label" for="LastName">
+                                        <i class="fas fa-user"></i>
+                                        Last Name
+                                    </label>
+                                    <input asp-for="LastName"
+                                           class="form-control @(ViewData.ModelState.IsValidField("LastName") ? "" : "is-invalid")"
+                                           placeholder="Enter your last name (optional)" />
+                                    <span asp-validation-for="LastName" class="invalid-feedback"></span>
+                                </div>
+
+                                <!-- Email (Read-only) -->
+                                <div class="form-group">
+                                    <label class="form-label" for="Email">
+                                        <i class="fas fa-envelope"></i>
+                                        Email Address
+                                    </label>
+                                    <input asp-for="Email"
+                                           class="form-control"
+                                           placeholder="Your email address"
+                                           readonly
+                                           style="background: rgba(255, 255, 255, 0.02); cursor: not-allowed;" />
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Email address cannot be changed
+                                    </small>
+                                </div>
+
+                                <!-- Model State Errors -->
+                                @if (!ViewData.ModelState.IsValid)
+                                {
+                                    <div class="alert alert-danger">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-exclamation-circle me-3" style="font-size: 1.2rem;"></i>
+                                            <div>
+                                                <strong>Please correct the following errors:</strong>
+                                                <ul class="mb-0 mt-2">
+                                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                                    {
+                                                        <li>@error.ErrorMessage</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Action Buttons -->
+                                <div class="button-group">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Save Changes
+                                    </button>
+                                    <a href="@Url.Action("Index", "Settings")" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i>
+                                        Back to Settings
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info Section -->
+                    <div class="row g-4">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="profile-card">
+                                <div style="padding: 25px; text-align: center;">
+                                    <div style="font-size: 2.5rem; color: #8b5cf6; margin-bottom: 15px;">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <h5 style="color: #ffffff; margin-bottom: 10px;">Security</h5>
+                                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; font-size: 0.9rem;">Keep your account secure</p>
+                                    <a href="@Url.Action("ChangePassword", "Settings")" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="profile-card">
+                                <div style="padding: 25px; text-align: center;">
+                                    <div style="font-size: 2.5rem; color: #8b5cf6; margin-bottom: 15px;">
+                                        <i class="fas fa-cogs"></i>
+                                    </div>
+                                    <h5 style="color: #ffffff; margin-bottom: 10px;">Account</h5>
+                                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; font-size: 0.9rem;">Manage account settings</p>
+                                    <a href="@Url.Action("Account", "Settings")" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-user-cog"></i> Account Settings
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="profile-card">
+                                <div style="padding: 25px; text-align: center;">
+                                    <div style="font-size: 2.5rem; color: #8b5cf6; margin-bottom: 15px;">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <h5 style="color: #ffffff; margin-bottom: 10px;">Dashboard</h5>
+                                    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px; font-size: 0.9rem;">View your statistics</p>
+                                    <a href="@Url.Action("Index", "Settings")" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-tachometer-alt"></i> View Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/settingsprofilejs.js"></script>
+</body>
+</html>

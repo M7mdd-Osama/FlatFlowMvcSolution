@@ -16,13 +16,15 @@
                     <i class="fas fa-users"></i> Clients
                 </a>
             </div>
+
             <div class="nav-item">
-                <a class="nav-link @(activePage == "Reports" ? "active" : "")" href="#">
-                    <i class="fas fa-chart-bar"></i> Reports
+                <a class="nav-link @(activePage == "FacebookGroups" ? "active" : "")" href="@Url.Action("Index", "FacebookGroup")">
+                    <i class="fab fa-facebook"></i> Facebook Groups
                 </a>
             </div>
+
             <div class="nav-item">
-                <a class="nav-link @(activePage == "Settings" ? "active" : "")" href="#">
+                <a class="nav-link @(activePage == "Settings" || activePage == "Profile" || activePage == "ChangePassword" ? "active" : "")" href="@Url.Action("Index", "Settings")">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </div>
@@ -99,13 +101,10 @@
 
     /* Responsive */
     @@media (max-width: 768px) {
-        .logout-btn
-
-    {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-
+        .logout-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
     }
 
     /* Custom Modal Styles */
@@ -135,18 +134,15 @@
     }
 
     @@keyframes modalSlideIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.9);
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
 
     .modal-icon {

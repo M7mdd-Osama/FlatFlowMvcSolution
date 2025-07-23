@@ -1,5 +1,4 @@
-﻿using FlatFlow.DAL.Models.ApartmentModel;
-using FlatFlow.DAL.Models.Shared;
+﻿using FlatFlow.DAL.Models.Shared;
 
 namespace FlatFlow.DAL.Data.Configurations
 {

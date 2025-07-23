@@ -1,6 +1,5 @@
 ﻿using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace FlatFlow.DAL.Repositories.Classes
 {

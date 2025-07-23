@@ -1,3 +1,5 @@
+using Demo.BLL.Interfaces;
+using Demo.BLL.Repositories;
 using FlatFlow.BLL.DTOs;
 using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Models;
@@ -34,6 +36,7 @@ namespace FlatFlow.PL
             builder.Services.AddScoped<IGenericRepo<Apartment>, GenericRepo<Apartment>>();
             builder.Services.AddScoped<IApartmentRepo, ApartmentRepo>();
             builder.Services.AddScoped<IClientRepo, ClientRepo>();
+            builder.Services.AddScoped<IApartmentGroupPostRepo, ApartmentGroupPostRepo>();
 
             // Authentication Configuration
             builder.Services.AddAuthentication(options =>
@@ -75,6 +78,8 @@ namespace FlatFlow.PL
             {
                 options.MultipartBodyLengthLimit = 104857600; // 100MB
             });
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
 
             var app = builder.Build();

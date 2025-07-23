@@ -59,7 +59,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Apartments", (string)null);
+                    b.ToTable("Apartments");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.ApartmentModel.ApartmentImage", b =>
@@ -85,7 +85,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("ApartmentId");
 
-                    b.ToTable("ApartmentImages", (string)null);
+                    b.ToTable("ApartmentImages");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.Client", b =>
@@ -131,7 +131,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.FacebookGroup", b =>
@@ -152,9 +152,15 @@ namespace FlatFlow.DAL.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("FacebookGroups", (string)null);
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FacebookGroups");
                 });
 
             modelBuilder.Entity("FlatFlow.DAL.Models.Identity.User", b =>
@@ -260,7 +266,7 @@ namespace FlatFlow.DAL.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("ApartmentGroupPosts", (string)null);
+                    b.ToTable("ApartmentGroupPosts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -431,6 +437,17 @@ namespace FlatFlow.DAL.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Apartment");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FlatFlow.DAL.Models.FacebookGroup", b =>
+                {
+                    b.HasOne("FlatFlow.DAL.Models.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

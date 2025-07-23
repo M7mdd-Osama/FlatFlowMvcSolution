@@ -1,0 +1,182 @@
+﻿@model List<FacebookGroupViewModel>
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "FacebookGroups";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Groups Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/facebookgroupindexstyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="floating-elements"></div>
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h1 class="page-title mb-0">Facebook Groups</h1>
+                            <a href="@Url.Action("Add", "FacebookGroup")" class="btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                <span>Add New Group</span>
+                            </a>
+                        </div>
+
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-3" style="font-size: 1.2rem; color: #10b981;"></i>
+                                    <div>
+                                        <strong>Success!</strong> @TempData["GroupSuccess"]
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        @if (TempData["GroupError"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.2rem; color: #ef4444;"></i>
+                                    <div>
+                                        <strong>Error!</strong> @TempData["GroupError"]
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        <!-- Search Form -->
+                        <form method="get" asp-action="Index" class="search-form">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control" placeholder="Search Facebook groups...">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-section">
+                        <div class="row g-3">
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fab fa-facebook"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.Count ?? 0)</div>
+                                    <div class="stats-label">Total Groups</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-share-alt"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.Sum(g => g.PostsCount) ?? 0)</div>
+                                    <div class="stats-label">Total Posts</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+                                <div class="stats-card">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="stats-number">@(Model?.Any() == true ? Math.Round(Model.Average(g => g.PostsCount), 1) : 0)</div>
+                                    <div class="stats-label">Avg Posts/Group</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Creative Groups Grid -->
+                    <div class="groups-grid">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var group in Model)
+                            {
+                                <div class="group-tile">
+                                    <div class="tile-particles">
+                                        <div class="particle"></div>
+                                        <div class="particle"></div>
+                                        <div class="particle"></div>
+                                        <div class="particle"></div>
+                                    </div>
+
+                                    <div class="tile-header">
+                                        <div class="fb-icon">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </div>
+                                        <div class="tile-title">
+                                            <h3>@group.GroupName</h3>
+                                            <div class="tile-subtitle">
+                                                <i class="fas fa-users"></i>
+                                                <span>Facebook Group</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="tile-body">
+                                        <div class="posts-display">
+                                            <div class="posts-number">@group.PostsCount.ToString("N0")</div>
+                                            <div class="posts-label">Total Posts</div>
+                                        </div>
+
+                                        <div class="tile-actions">
+                                            @if (!string.IsNullOrEmpty(group.GroupLink))
+                                            {
+                                                <a href="@group.GroupLink" target="_blank" class="action-btn btn-visit">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                    <span>Visit</span>
+                                                </a>
+                                            }
+                                            <a href="@Url.Action("Details", "FacebookGroup", new { id = group.Id })" class="action-btn btn-details">
+                                                <i class="fas fa-eye"></i>
+                                                <span>Details</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-groups">
+                                <i class="fab fa-facebook"></i>
+                                <h3>No Facebook Groups Found</h3>
+                                <p>Start by adding your first Facebook group to manage your apartment posts.</p>
+                                <a href="@Url.Action("Add", "FacebookGroup")" class="btn btn-primary mt-3">
+                                    <i class="fas fa-plus"></i> Add Your First Group
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/facebookgroupindexjs.js"></script>
+</body>
+</html>

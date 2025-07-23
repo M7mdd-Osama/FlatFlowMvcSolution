@@ -1,25 +1,30 @@
-﻿using System.Security.Claims;
+﻿using Demo.BLL.Interfaces;
+using FlatFlow.BLL.DTOs;
+using FlatFlow.DAL.Data.DbContexts;
 using FlatFlow.DAL.Models.ApartmentModel;
-using FlatFlow.DAL.Repositories.Interfaces;
+using FlatFlow.DAL.Models.Shared;
 using FlatFlow.PL.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FlatFlow.PL.Controllers
 {
     [Authorize]
     public class ApartmentController(
-        IApartmentRepo _apartmentRepo,
+        IUnitOfWork _unitOfWork,
         IWebHostEnvironment _webHostEnvironment,
-        IHttpContextAccessor _httpContextAccessor) : Controller
+        IHttpContextAccessor _httpContextAccessor,
+        AppDbContext _dbContext) : Controller
     {
 
         #region Index Page with Pagination
         public IActionResult Index(string searchTerm, bool? isRentedFilter, decimal? minPrice, decimal? maxPrice, int page = 1, int pageSize = 9)
         {
             var apartments = string.IsNullOrWhiteSpace(searchTerm)
-                ? _apartmentRepo.GetWithImagesAndClients()
-                : _apartmentRepo.Search(searchTerm);
+                ? _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
+                : _unitOfWork.ApartmentRepo.Search(searchTerm);
 
             // Filter by rental status
             if (isRentedFilter.HasValue)
@@ -75,7 +80,6 @@ namespace FlatFlow.PL.Controllers
                 TotalApartments = apartments.Count(),
                 AvailableCount = apartments.Count(a => !a.IsRented),
                 RentedCount = apartments.Count(a => a.IsRented),
-                TotalCommission = apartments.SelectMany(a => a.Clients).Sum(c => c.Commission ?? 0),
 
                 // Search filters
                 SearchTerm = searchTerm,
@@ -89,14 +93,14 @@ namespace FlatFlow.PL.Controllers
         #endregion
 
         #region Apartment Details
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var apartment = _apartmentRepo.GetWithImagesAndClients()
+            var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == id);
 
             if (apartment == null)
             {
-                TempData["ApartmentError"] = "Apartment not found."; 
+                TempData["ApartmentError"] = "Apartment not found.";
                 return RedirectToAction("Index");
             }
 
@@ -109,7 +113,7 @@ namespace FlatFlow.PL.Controllers
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ApartmentDetailsViewModel
+            var viewModel = new ApartmentDetailsWithGroupsViewModel
             {
                 Id = apartment.Id,
                 Title = apartment.Title,
@@ -127,7 +131,98 @@ namespace FlatFlow.PL.Controllers
                 }).ToList()
             };
 
+            var apartmentGroups = await _dbContext.FacebookGroups
+                .Where(g => g.UserId == userId)
+                .Select(g => new ApartmentGroupPostViewModel
+                {
+                    ApartmentId = id,
+                    GroupId = g.Id,
+                    GroupName = g.GroupName,
+                    GroupLink = g.GroupLink,
+                    IsPosted = g.ApartmentGroupPosts.Any(p => p.ApartmentId == id && p.IsPosted)
+                })
+                .OrderBy(g => g.GroupName)
+                .ToListAsync();
+
+            viewModel.FacebookGroups = apartmentGroups;
             return View(viewModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> TogglePostStatus([FromBody] TogglePostStatusRequest request)
+        {
+            try
+            {
+                // Validate the request
+                if (request == null || request.ApartmentId <= 0 || request.GroupId <= 0)
+                {
+                    return Json(new { success = false, message = "Invalid request data." });
+                }
+
+                // Get current user ID
+                var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, message = "User not authenticated." });
+                }
+
+                // Verify that the apartment belongs to the current user
+                var apartment = await _dbContext.Apartments
+                    .FirstOrDefaultAsync(a => a.Id == request.ApartmentId && a.UserId == userId);
+
+                if (apartment == null)
+                {
+                    return Json(new { success = false, message = "Apartment not found or you don't have permission to modify it." });
+                }
+
+                // Verify that the Facebook group belongs to the current user
+                var group = await _dbContext.FacebookGroups
+                    .FirstOrDefaultAsync(g => g.Id == request.GroupId && g.UserId == userId);
+
+                if (group == null)
+                {
+                    return Json(new { success = false, message = "Facebook group not found or you don't have access to it." });
+                }
+
+                // Find existing post or create new one
+                var existingPost = await _dbContext.ApartmentGroupPosts
+                    .FirstOrDefaultAsync(p => p.ApartmentId == request.ApartmentId && p.GroupId == request.GroupId);
+
+                if (existingPost != null)
+                {
+                    // Update existing post status
+                    existingPost.IsPosted = request.IsPosted;
+                }
+                else
+                {
+                    // Create new post record
+                    _dbContext.ApartmentGroupPosts.Add(new ApartmentGroupPost
+                    {
+                        ApartmentId = request.ApartmentId,
+                        GroupId = request.GroupId,
+                        IsPosted = request.IsPosted
+                    });
+                }
+                await _unitOfWork.CompleteAsync();
+
+                // Return success response
+                var statusMessage = request.IsPosted ? "marked as posted" : "marked as not posted";
+                return Json(new
+                {
+                    success = true,
+                    message = $"Post status successfully {statusMessage} for group '{group.GroupName}'!"
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you might want to use a proper logging framework)
+                // _logger.LogError(ex, "Error occurred while toggling post status");
+
+                return Json(new
+                {
+                    success = false,
+                    message = "An error occurred while updating the post status. Please try again."
+                });
+            }
         }
 
         #endregion
@@ -220,7 +315,7 @@ namespace FlatFlow.PL.Controllers
                     }
                 }
 
-                _apartmentRepo.Add(apartment);
+                _unitOfWork.ApartmentRepo.Add(apartment);
                 TempData["ApartmentSuccess"] = "Apartment added successfully!";
                 return RedirectToAction("Index");
             }
@@ -238,7 +333,7 @@ namespace FlatFlow.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var apartment = _apartmentRepo.GetWithImagesAndClients()
+                var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                     .FirstOrDefault(a => a.Id == model.Id);
 
                 if (apartment == null)
@@ -294,7 +389,7 @@ namespace FlatFlow.PL.Controllers
                     // Remove images from database using repository method
                     if (imagesToRemove.Any())
                     {
-                        _apartmentRepo.RemoveImages(imagesToRemove);
+                        _unitOfWork.ApartmentRepo.RemoveImages(imagesToRemove);
 
                         // Remove from apartment collection as well
                         foreach (var img in imagesToRemove)
@@ -356,7 +451,7 @@ namespace FlatFlow.PL.Controllers
 
                 try
                 {
-                    _apartmentRepo.Update(apartment);
+                    _unitOfWork.ApartmentRepo.Update(apartment);
                     TempData["ApartmentSuccess"] = "Apartment updated successfully!";
                     return RedirectToAction("Details", new { id = apartment.Id });
                 }
@@ -368,7 +463,7 @@ namespace FlatFlow.PL.Controllers
             }
 
             // Redisplay form if validation failed
-            var existingApartment = _apartmentRepo.GetWithImagesAndClients()
+            var existingApartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == model.Id);
             if (existingApartment != null)
             {
@@ -381,7 +476,7 @@ namespace FlatFlow.PL.Controllers
         // GET: Edit Apartment
         public IActionResult Edit(int id)
         {
-            var apartment = _apartmentRepo.GetWithImagesAndClients()
+            var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == id);
 
             if (apartment == null)
@@ -423,7 +518,7 @@ namespace FlatFlow.PL.Controllers
         {
             try
             {
-                var apartment = _apartmentRepo.GetWithImagesAndClients()
+                var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                     .FirstOrDefault(a => a.Id == apartmentId);
 
                 if (apartment == null)
@@ -454,11 +549,7 @@ namespace FlatFlow.PL.Controllers
                     apartment.ApartmentImages.Remove(imageToDelete);
 
                     // Update the apartment
-                    _apartmentRepo.Update(apartment);
-
-                    // Alternative: Delete the image entity directly if you have ImageRepository
-                    // _imageRepo.Remove(imageToDelete);
-                    // _imageRepo.SaveChanges();
+                    _unitOfWork.ApartmentRepo.Update(apartment);
 
                     return Json(new { success = true, message = "Image deleted successfully" });
                 }
@@ -474,7 +565,7 @@ namespace FlatFlow.PL.Controllers
         // GET: Delete Apartment
         public IActionResult Delete(int id)
         {
-            var apartment = _apartmentRepo.GetWithImagesAndClients()
+            var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == id);
 
             if (apartment == null)
@@ -510,7 +601,7 @@ namespace FlatFlow.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var apartment = _apartmentRepo.GetWithImagesAndClients()
+            var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == id);
 
             if (apartment == null)
@@ -544,7 +635,7 @@ namespace FlatFlow.PL.Controllers
                 }
             }
 
-            _apartmentRepo.Remove(apartment);
+            _unitOfWork.ApartmentRepo.Remove(apartment);
             TempData["ApartmentSuccess"] = "Apartment deleted successfully!";
             return RedirectToAction("Index");
         }
@@ -556,7 +647,7 @@ namespace FlatFlow.PL.Controllers
         [HttpPost]
         public IActionResult ToggleRentStatus(int id)
         {
-            var apartment = _apartmentRepo.GetWithImagesAndClients()
+            var apartment = _unitOfWork.ApartmentRepo.GetWithImagesAndClients()
                 .FirstOrDefault(a => a.Id == id);
 
             if (apartment == null)
@@ -572,7 +663,7 @@ namespace FlatFlow.PL.Controllers
             }
 
             apartment.IsRented = !apartment.IsRented;
-            _apartmentRepo.Update(apartment);
+            _unitOfWork.ApartmentRepo.Update(apartment);
 
             return Json(new
             {

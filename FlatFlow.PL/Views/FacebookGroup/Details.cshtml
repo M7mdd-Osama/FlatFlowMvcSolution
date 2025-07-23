@@ -1,0 +1,200 @@
+﻿@model FacebookGroupDetailsViewModel
+@{
+    Layout = null;
+    ViewData["ActivePage"] = "FacebookGroups";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.GroupName - Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/facebookgroupdetailsstyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="floating-elements"></div>
+    @Html.AntiForgeryToken()
+
+    <div class="main-container">
+        <div class="row g-0 h-100">
+
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="main-content">
+
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "FacebookGroup")">Facebook Groups</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">@Model.GroupName</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Alerts -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-3" style="font-size: 1.2rem;"></i>
+                                <div>
+                                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Group Info Card -->
+                    <div class="group-info-card">
+                        <div class="group-header">
+                            <div class="group-avatar">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="group-title">
+                                <h2>@Model.GroupName</h2>
+                                <div class="group-subtitle">
+                                    <i class="fas fa-users"></i>
+                                    <span>Facebook Group</span>
+                                    @if (!string.IsNullOrEmpty(Model.GroupLink))
+                                    {
+                                        <span>•</span>
+                                        <span class="copy-link-btn" style="cursor:pointer;" data-link="@Model.GroupLink">
+                                            <i class="fas fa-link"></i> Copy Link
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group-actions">
+                            <a href="@Url.Action("Index", "FacebookGroup")" class="btn btn-back">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Groups
+                            </a>
+                            @if (!string.IsNullOrEmpty(Model.GroupLink))
+                            {
+                                <a href="@Model.GroupLink" target="_blank" class="btn btn-facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                    Visit Group
+                                </a>
+                            }
+                            <a href="@Url.Action("Edit", "FacebookGroup", new { id = Model.Id })" class="btn btn-edit">
+                                <i class="fas fa-edit"></i>
+                                Edit Group
+                            </a>
+                            <a href="@Url.Action("Delete", "FacebookGroup", new { id = Model.Id })" class="btn btn-delete">
+                                <i class="fas fa-trash-alt"></i>
+                                Delete Group
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <div class="stats-number">@(Model.ApartmentPosts?.Count ?? 0)</div>
+                            <div class="stats-label">Total Posts</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stats-number">@(Model.ApartmentPosts?.Count(p => p.IsPosted) ?? 0)</div>
+                            <div class="stats-label">Posted</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stats-number">@(Model.ApartmentPosts?.Count(p => !p.IsPosted) ?? 0)</div>
+                            <div class="stats-label">Pending</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stats-number">@(Model.ApartmentPosts?.Any() == true ? Math.Round((double)Model.ApartmentPosts.Count(p => p.IsPosted) / Model.ApartmentPosts.Count * 100, 1) : 0)%</div>
+                            <div class="stats-label">Posted Rate</div>
+                        </div>
+                    </div>
+
+                    <!-- Posts Section -->
+                    <div class="posts-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-list"></i>
+                            Apartment Posts
+                        </h3>
+
+                        @if (Model.ApartmentPosts != null && Model.ApartmentPosts.Any())
+                        {
+                            <div class="posts-grid">
+                                @foreach (var post in Model.ApartmentPosts.OrderBy(p => p.IsPosted).ThenByDescending(p => p.Apartment?.Title))
+                                {
+                                    <div class="post-card">
+                                        <div class="post-header">
+                                            <div>
+                                                <div class="post-title">@(post.Apartment?.Title ?? "Unknown Apartment")</div>
+                                                <div class="post-date">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    @(post.Apartment?.Location ?? "No location")
+                                                </div>
+                                            </div>
+                                            <div class="post-status @(post.IsPosted ? "status-posted" : "status-not-posted")">
+                                                @if (post.IsPosted)
+                                                {
+                                                    <i class="fas fa-check"></i>
+                                                    <span>Posted</span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-clock"></i>
+                                                    <span>Pending</span>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="post-actions">
+                                            <button onclick="togglePostStatus(@post.ApartmentId, @Model.Id, this)"
+                                                    class="btn btn-toggle @(post.IsPosted ? "btn-delete" : "btn-success")"
+                                                    data-apartment-id="@post.ApartmentId"
+                                                    data-group-id="@Model.Id">
+                                                <i class="fas @(post.IsPosted ? "fa-times" : "fa-check")"></i>
+                                                @(post.IsPosted ? "Mark Not Posted" : "Mark Posted")
+                                            </button>
+                                            <a href="@Url.Action("Details", "Apartment", new { id = post.ApartmentId })"
+                                               class="btn-view-apartment">
+                                                <i class="fas fa-eye"></i>
+                                                View Apartment
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="no-posts">
+                                <i class="fas fa-inbox"></i>
+                                <h4>No Posts Found</h4>
+                                <p>This group doesn't have any apartment posts yet.</p>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.all.min.js"></script>
+    <script src="~/js/facebookgroupdetailsjs.js"></script>
+</body>
+</html>

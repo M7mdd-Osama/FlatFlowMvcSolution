@@ -1,14 +1,15 @@
-﻿using FlatFlow.DAL.Models;
-using FlatFlow.DAL.Repositories.Interfaces;
-using FlatFlow.PL.ViewModels;
-using Microsoft.AspNetCore.Mvc;
+﻿using Demo.BLL.Interfaces;
+using FlatFlow.DAL.Models;
 using FlatFlow.PL.Helpers;
-
+using FlatFlow.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+ 
 namespace FlatFlow.PL.Controllers
 {
+    [Authorize]
     public class ClientController(
-        IApartmentRepo _apartmentRepo,
-        IClientRepo _clientRepo) : Controller
+        IUnitOfWork _unitOfWork) : Controller
     {
         #region Index Page
         public ActionResult Index(int page = 1, int pageSize = 9)
@@ -17,13 +18,14 @@ namespace FlatFlow.PL.Controllers
 
             var currentUserId = UserHelper.GetCurrentUserId(User);
 
-            var clients = _clientRepo.GetAllWithApartments().Where(c => c.UserId == currentUserId);
+            var clients = _unitOfWork.ClientRepo.GetAllWithApartments().Where(c => c.UserId == currentUserId);
 
             viewModel.TotalItems = clients.Count();
             viewModel.CurrentPage = page;
             viewModel.PageSize = pageSize;
 
             var pagedClients = clients
+                .OrderBy(c => c.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(c => new ClientViewModel
@@ -63,7 +65,7 @@ namespace FlatFlow.PL.Controllers
         public IActionResult Add()
         {
             var currentUserId = UserHelper.GetCurrentUserId(User);
-            var apartments = _apartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
+            var apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
             var viewModel = new AddClientViewModel
             {
                 Apartments = apartments
@@ -81,13 +83,13 @@ namespace FlatFlow.PL.Controllers
 
                 if (model.ApartmentId.HasValue)
                 {
-                    var apartmentExists = _apartmentRepo.GetApartmentsByUserId(currentUserId)
+                    var apartmentExists = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId)
                         .Any(a => a.Id == model.ApartmentId.Value);
 
                     if (!apartmentExists)
                     {
                         ModelState.AddModelError("ApartmentId", "Selected apartment is not valid or you don't have permission to access it.");
-                        model.Apartments = _apartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
+                        model.Apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
                         return View(model);
                     }
                 }
@@ -103,13 +105,13 @@ namespace FlatFlow.PL.Controllers
                     UserId = currentUserId
                 };
 
-                _clientRepo.Add(client);
-                TempData["ClientSuccess"] = "Client added successfully!"; // غيرت هنا
+                _unitOfWork.ClientRepo.Add(client);
+                TempData["ClientSuccess"] = "Client added successfully!";
                 return RedirectToAction("Index");
             }
 
             var userId = UserHelper.GetCurrentUserId(User);
-            model.Apartments = _apartmentRepo.GetApartmentsByUserId(userId).ToList();
+            model.Apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(userId).ToList();
             return View(model);
         }
 
@@ -120,7 +122,7 @@ namespace FlatFlow.PL.Controllers
         public IActionResult Details(int id)
         {
             var currentUserId = UserHelper.GetCurrentUserId(User);
-            var client = _clientRepo.GetAllWithApartments()
+            var client = _unitOfWork.ClientRepo.GetAllWithApartments()
                 .FirstOrDefault(c => c.Id == id && c.UserId == currentUserId);
 
             if (client == null)
@@ -138,16 +140,16 @@ namespace FlatFlow.PL.Controllers
         public IActionResult Edit(int id)
         {
             var currentUserId = UserHelper.GetCurrentUserId(User);
-            var client = _clientRepo.GetAll()
+            var client = _unitOfWork.ClientRepo.GetAll()
                 .FirstOrDefault(c => c.Id == id && c.UserId == currentUserId);
 
             if (client == null)
             {
-                TempData["ClientError"] = "Client not found or you don't have permission to edit it!"; // غيرت هنا
+                TempData["ClientError"] = "Client not found or you don't have permission to edit it!";
                 return RedirectToAction("Index");
             }
 
-            var apartments = _apartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
+            var apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
             var viewModel = new EditClientViewModel
             {
                 Id = client.Id,
@@ -170,24 +172,24 @@ namespace FlatFlow.PL.Controllers
             if (ModelState.IsValid)
             {
                 var currentUserId = UserHelper.GetCurrentUserId(User);
-                var client = _clientRepo.GetAll()
+                var client = _unitOfWork.ClientRepo.GetAll()
                     .FirstOrDefault(c => c.Id == model.Id && c.UserId == currentUserId);
 
                 if (client == null)
                 {
-                    TempData["ClientError"] = "Client not found or you don't have permission to edit it!"; // غيرت هنا
+                    TempData["ClientError"] = "Client not found or you don't have permission to edit it!";
                     return RedirectToAction("Index");
                 }
 
                 if (model.ApartmentId.HasValue)
                 {
-                    var apartmentExists = _apartmentRepo.GetApartmentsByUserId(currentUserId)
+                    var apartmentExists = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId)
                         .Any(a => a.Id == model.ApartmentId.Value);
 
                     if (!apartmentExists)
                     {
                         ModelState.AddModelError("ApartmentId", "Selected apartment is not valid or you don't have permission to access it.");
-                        model.Apartments = _apartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
+                        model.Apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(currentUserId).ToList();
                         return View(model);
                     }
                 }
@@ -199,13 +201,13 @@ namespace FlatFlow.PL.Controllers
                 client.Commission = model.Commission;
                 client.ApartmentId = model.ApartmentId;
 
-                _clientRepo.Update(client);
-                TempData["ClientSuccess"] = "Client updated successfully!"; // غيرت هنا
+                _unitOfWork.ClientRepo.Update(client);
+                TempData["ClientSuccess"] = "Client updated successfully!";
                 return RedirectToAction("Index");
             }
 
             var userId = UserHelper.GetCurrentUserId(User);
-            model.Apartments = _apartmentRepo.GetApartmentsByUserId(userId).ToList();
+            model.Apartments = _unitOfWork.ApartmentRepo.GetApartmentsByUserId(userId).ToList();
             return View(model);
         }
 
@@ -216,7 +218,7 @@ namespace FlatFlow.PL.Controllers
         public IActionResult Delete(int id)
         {
             var currentUserId = UserHelper.GetCurrentUserId(User);
-            var client = _clientRepo.GetAll()
+            var client = _unitOfWork.ClientRepo.GetAll()
                 .FirstOrDefault(c => c.Id == id && c.UserId == currentUserId);
 
             if (client == null)
@@ -232,7 +234,7 @@ namespace FlatFlow.PL.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var currentUserId = UserHelper.GetCurrentUserId(User);
-            var client = _clientRepo.GetAll()
+            var client = _unitOfWork.ClientRepo.GetAll()
                 .FirstOrDefault(c => c.Id == id && c.UserId == currentUserId);
 
             if (client == null)
@@ -241,7 +243,7 @@ namespace FlatFlow.PL.Controllers
                 return RedirectToAction("Index");
             }
 
-            _clientRepo.Remove(client);
+            _unitOfWork.ClientRepo.Remove(client);
             TempData["ClientSuccess"] = "Client deleted successfully!";
             return RedirectToAction("Index");
         }
