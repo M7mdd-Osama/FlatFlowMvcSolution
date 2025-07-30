@@ -74,13 +74,11 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="form-label">Title</label>
-                                        @Html.LabelFor(m => m.Title, new { @class = "form-label" })
                                         @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Enter apartment title" })
                                         @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Monthly Rent ($)</label>
-                                        @Html.LabelFor(m => m.Price, new { @class = "form-label" })
                                         @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", placeholder = "Enter monthly rent", step = "0.1", min = "0" })
                                         @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
                                     </div>
@@ -88,7 +86,6 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <label class="form-label">Location</label>
-                                        @Html.LabelFor(m => m.Location, new { @class = "form-label" })
                                         @Html.TextBoxFor(m => m.Location, new { @class = "form-control", placeholder = "Enter apartment location" })
                                         @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
                                     </div>
@@ -104,7 +101,6 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <label class="form-label">Description</label>
-                                        @Html.LabelFor(m => m.Description, new { @class = "form-label" })
                                         @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "4", placeholder = "Enter apartment description" })
                                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                                     </div>

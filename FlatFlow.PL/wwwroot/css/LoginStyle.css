@@ -195,6 +195,7 @@ body {
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 2;
+    flex-grow: 1;
 }
 
 .form-header {
@@ -417,6 +418,11 @@ body {
         padding: 30px;
     }
 
+    .right-side {
+        flex-grow: 1;
+        min-height: 60vh;
+    }
+
     .brand-title {
         font-size: 2.5rem;
     }
@@ -424,59 +430,322 @@ body {
     .feature-list {
         display: none;
     }
+
+    .form-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: none;
+    }
 }
 
 @media (max-width: 768px) {
+    body {
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .main-container {
+        height: 100vh;
+        flex-direction: column;
+    }
+
     .left-side {
         flex: 0 0 30vh;
-        padding: 20px;
+        padding: 15px;
+        min-height: 30vh;
+    }
+
+    .right-side {
+        flex-grow: 1;
+        min-height: 70vh;
+        padding: 10px;
     }
 
     .brand-logo {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
+        margin-bottom: 15px;
     }
 
         .brand-logo i {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
 
     .brand-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
     }
 
     .brand-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .form-container {
         background: rgba(255, 255, 255, 0.95);
-        padding: 30px 25px;
-        margin: 20px;
+        padding: 25px 20px;
+        margin: 0;
         border-radius: 20px;
+        flex-grow: 1;
+        max-width: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: auto;
+    }
+
+    .form-header {
+        margin-bottom: 25px;
     }
 
     .form-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        padding: 12px 15px 12px 45px;
+        font-size: 0.95rem;
+    }
+
+    .input-icon {
+        left: 15px;
+        font-size: 1rem;
+    }
+
+    .btn-login {
+        padding: 12px;
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .divider {
+        margin: 20px 0;
     }
 }
 
-@media (max-width: 480px) {
-    .left-side {
-        flex: 0 0 25vh;
-        padding: 15px;
+/* Extra Small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+    body {
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
+    .main-container {
+        height: 100vh;
+        flex-direction: column;
+    }
+
+    .left-side {
+        flex: 0 0 25vh;
+        padding: 10px;
+        min-height: 25vh;
+    }
+
+    .right-side {
+        flex-grow: 1;
+        min-height: 75vh;
+        padding: 8px;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .brand-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 8px;
+    }
+
+    .brand-logo {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 8px;
+        border-radius: 15px;
+    }
+
+        .brand-logo i {
+            font-size: 1.5rem;
+        }
+
     .brand-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+
+    .brand-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.3;
+        margin-bottom: 0;
     }
 
     .form-container {
-        padding: 25px 20px;
-        margin: 15px;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 20px 15px;
+        margin: 0;
+        border-radius: 15px;
+        flex-grow: 1;
+        max-width: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: auto;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        margin-bottom: 20px;
     }
 
     .form-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+
+    .form-subtitle {
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        padding: 12px 12px 12px 40px;
+        font-size: 0.9rem;
+        border-radius: 12px;
+    }
+
+    .input-icon {
+        left: 12px;
+        font-size: 0.95rem;
+    }
+
+    .form-check {
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+    }
+
+    .form-check-label {
+        font-size: 0.85rem;
+    }
+
+    .btn-login {
+        padding: 12px;
+        font-size: 0.95rem;
+        margin-bottom: 18px;
+        border-radius: 12px;
+    }
+
+    .forgot-password {
+        margin-bottom: 18px;
+    }
+
+        .forgot-password a {
+            font-size: 0.85rem;
+        }
+
+    .divider {
+        margin: 18px 0;
+    }
+
+        .divider span {
+            font-size: 0.8rem;
+            padding: 0 15px;
+        }
+
+    .register-link {
+        font-size: 0.85rem;
+    }
+
+    .validation-error {
+        font-size: 0.8rem;
+    }
+
+    .validation-summary {
+        padding: 12px;
+        margin-bottom: 18px;
+        font-size: 0.85rem;
+    }
+
+    /* Hide floating circles on mobile for better performance */
+    .floating-circle {
+        display: none;
+    }
+}
+
+/* Very small screens optimization */
+@media (max-width: 400px) {
+    .left-side {
+        flex: 0 0 20vh;
+        min-height: 20vh;
+        padding: 8px;
+    }
+
+    .right-side {
+        min-height: 80vh;
+        padding: 5px;
+    }
+
+    .brand-logo {
+        width: 45px;
+        height: 45px;
+    }
+
+        .brand-logo i {
+            font-size: 1.3rem;
+        }
+
+    .brand-title {
+        font-size: 1.3rem;
+    }
+
+    .brand-subtitle {
+        font-size: 0.75rem;
+    }
+
+    .form-container {
+        padding: 15px 12px;
+        border-radius: 12px;
+    }
+
+    .form-title {
+        font-size: 1.4rem;
+    }
+
+    .form-control {
+        padding: 10px 10px 10px 35px;
+        font-size: 0.85rem;
+    }
+
+    .input-icon {
+        left: 10px;
+        font-size: 0.9rem;
     }
 }

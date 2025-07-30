@@ -388,7 +388,7 @@
                                         <i class="fas fa-info-circle"></i>
                                         Description
                                     </h3>
-                                    <p>@Model.Description</p>
+                                    <div style="white-space: pre-wrap;">@Html.Raw(Html.Encode(Model.Description).Replace("\n", "<br />"))</div>
                                 </div>
                             }
                         </div>

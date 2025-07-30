@@ -5,6 +5,7 @@
 <div class="col-lg-2 col-md-3">
     <div class="sidebar">
         <h3><i class="fas fa-building"></i> FlatFlow</h3>
+        
         <nav class="nav flex-column">
             <div class="nav-item">
                 <a class="nav-link @(activePage == "Apartments" ? "active" : "")" href="/Apartment/Index">
@@ -39,10 +40,148 @@
             </div>
 
         </nav>
+
+        <!-- Footer Contact Info (Alternative placement) -->
+        <div class="sidebar-footer">
+            <div class="developer-info">
+                <h6><i class="fas fa-code"></i> Developer</h6>
+                <div class="dev-contact">
+                    <a href="tel:+201203893166" title="Call"><i class="fas fa-phone"></i></a>
+                    <a href="https://wa.me/201203893166" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:MohamedOsamaAliGomaa@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
+    /* Contact Info Styles - Added */
+    .contact-info {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 15px;
+        margin: 20px 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 2;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+    }
+
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-item i {
+        color: rgba(255, 255, 255, 0.8);
+        width: 16px;
+        text-align: center;
+    }
+
+    .contact-item a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    .contact-item a:hover {
+        color: #ffffff;
+        transform: translateX(3px);
+    }
+
+    .contact-item .fab.fa-whatsapp {
+        color: #25D366;
+    }
+
+    .contact-item .fas.fa-phone {
+        color: #4285F4;
+    }
+
+    .contact-item .fas.fa-envelope {
+        color: #EA4335;
+    }
+
+    /* Responsive adjustments for contact info */
+    @@media (max-width: 768px) {
+        .contact-info {
+            padding: 10px;
+            margin: 15px 0;
+        }
+
+        .contact-item {
+            font-size: 0.8rem;
+            gap: 8px;
+        }
+    }
+
+    /* Sidebar Footer Styles - Alternative placement */
+    .sidebar-footer {
+        margin-top: auto;
+        padding: 15px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 2;
+    }
+
+    .developer-info {
+        text-align: center;
+    }
+
+    .developer-info h6 {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .dev-contact {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .dev-contact a {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .dev-contact a:hover {
+        color: #ffffff;
+        transform: translateY(-2px) scale(1.1);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .dev-contact .fa-whatsapp:hover {
+        color: #25D366;
+    }
+
+    .dev-contact .fa-phone:hover {
+        color: #4285F4;
+    }
+
+    .dev-contact .fa-envelope:hover {
+        color: #EA4335;
+    }
+
+    /* Original styles */
     .logout-section {
         margin: 10px 0;
     }
@@ -90,8 +229,8 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        position: relative; /* Add this */
-        z-index: 100; /* Add this */
+        position: relative;
+        z-index: 100;
     }
 
         .sidebar .nav {

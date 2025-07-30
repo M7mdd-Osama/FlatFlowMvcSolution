@@ -159,7 +159,7 @@ namespace FlatFlow.PL.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation($"New user registered: {user.UserName}");
-                    TempData["SuccessMessage"] = "Account created successfully! Please login.";
+                    TempData["AccountSuccessMessage"] = "Account created successfully! Please login.";
                     return RedirectToAction(nameof(Login));
                 }
                 else

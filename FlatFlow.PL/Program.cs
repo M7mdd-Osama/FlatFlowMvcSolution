@@ -50,6 +50,13 @@ namespace FlatFlow.PL
             {
                 options.Tokens.ProviderMap.Add("Default",
                     new TokenProviderDescriptor(typeof(IUserTwoFactorTokenProvider<User>)));
+
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 1;
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
